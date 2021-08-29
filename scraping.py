@@ -16,9 +16,9 @@ def DoThing(numeroExpediente):
 
     driver.get('https://www.justiciacordoba.gob.ar/marcopolo/menu/index.aspx')
 
-    WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'txtUserName'))).send_keys('1-20816')
+    WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'txtUserName'))).send_keys('#')
 
-    WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'txtUserContrasenia'))).send_keys('nildarosa')
+    WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'txtUserContrasenia'))).send_keys('#')
 
     WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'cmdLogin'))).click()
 
