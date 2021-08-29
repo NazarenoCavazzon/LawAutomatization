@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta http-equiv="X-UA-Compatible" content="IE=EDGE" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>
+	:: G E S T I O N     D I G I T A L     P A R A     A B O G A D O S  ::
+</title>
+    <script type="text/javascript" src="../Scripts/jquery.min.js?v3.4.1"></script>
+    <script type="text/javascript" src="../Scripts/jquery-ui.min.js?v1.12.1"></script>
+    <script type="text/javascript" src="../Scripts/Funciones.js?v1.12.0.1"></script>
+    <script type="text/javascript" src="../Scripts/modernizr.custom.min.js?v=3.3.1"></script>
+    <script type="text/javascript" src="../Scripts/DataTypeValidators.min.js?v=3.2.0.0"></script>
+    <script type="text/javascript" src="../Scripts/jquery.json.min.js?v=2.3"></script>
+    <script type="text/javascript" src="../Scripts/dialog/webDialog.min.js?v=6.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/GridView/gridview.min.js?v=8.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/showCourtain.min.js?v2.0.0.0"></script>
+    <script type="text/javascript" src="../Scripts/cache.client.min.js?v=1.0.0.0"></script>
+    <script type="text/javascript" src="../Scripts/DatePicker/bootstrap-datepicker.min.js?v=1.9.0"></script>
+    <script type="text/javascript" src="../Scripts/DatePicker/bootstrap-datepicker.es.min.js?v=1.9.0.0"></script>
+    <script type="text/javascript" src="../Scripts/wsAjax/wsAjax.min.js?v=3.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/MyToolTip.min.js?v=1.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/popper.min.js?v4.3.1"></script>
+    <script type="text/javascript" src="../Scripts/bootstrap.min.js?v4.3.1"></script>
+
+    <link rel="stylesheet" type="text/css" href="../CSS/jqueryUI.custom/jquery-ui.min.css?v1.12.1" /><link rel="stylesheet" type="text/css" href="../CSS/icons.min.css" /><link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css?v4.3.1" /><link rel="stylesheet" type="text/css" href="../css/bootstrap-theme.min.css?v=3.3.6" /><link rel="stylesheet" type="text/css" href="../CSS/bootstrap.custom.min.css?v1.1" /><link rel="stylesheet" type="text/css" href="../CSS/DatePicker/bootstrap-datepicker.min.css?v=1.9.0" /><link rel="stylesheet" type="text/css" href="../CSS/gridView.min.css?v=1.1.1.0" /><link rel="stylesheet" type="text/css" href="../CSS/MarcoPolo.min.css?v=1.0.0.0" /><link rel="stylesheet" type="text/css" href="../CSS/General.min.css?v11.8.0.0" /><link rel="stylesheet" type="text/css" href="../CSS/IE10Support.min.css?11.8.0.0" />
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 10]>
+           <script>
+            alert("Uds. está corriendo una versión de Internet Explorer menor a la soportada por el sistema. Si continúa puede que algunas funcionalidades no esten disponibles, o algunas pantallas no se muestren correctamente.");
+           </script>
+    <![endif]-->
+    <script type="text/javascript">
+        var webDialogId = null;
+        function GridView_GetConfiguration() {
+            return { ajaxLoaderImage: "../Images/ajax-loader.gif" };
+        }
+        function closeDialog() {
+            $("[webDialogId=" + webDialogId + "]").webDialog("close");
+            webDialogId = null;
+        }
+
+        $(function () {
+            window.cacheProvider = new JSFramework.Commons.CacheManager.Cache();
+            window.originalAlert = window.alert;
+            window.alert = function (msg, closeOnMessage) {
+                var dialogId = "alertDialog";
+                if ($(".modalDialog[webDialogId=" + dialogId + "]").length <= 0)
+                    return window.jQuery.webDialog.show(msg, { dialogId: dialogId, showCloseButton: closeOnMessage });
+
+                return null;
+            };
+            try {
+                var elements = document.getElementsByTagName("INPUT");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("invalid", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                var message = this.getAttribute("requiredMessage");
+                                if (typeof message === "undefined" || message === null || message === "")
+                                    message = "Este campo es requerido";
+                                e.target.setCustomValidity(message);
+                            }
+                        }
+                        catch (m) { }
+                    });
+                    elements[i].addEventListener("input", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                        }
+                        catch (m) { }
+                        return true;
+                    });
+                }
+
+                var elements = document.getElementsByTagName("SELECT");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("invalid", function (e) {
+                        try {
+
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                var message = this.getAttribute("requiredMessage");
+                                if (typeof message === "undefined" || message === null || message === "")
+                                    message = "Este campo es requerido";
+                                e.target.setCustomValidity(message);
+                            }
+                        } catch (m) { }
+                    });
+                    elements[i].addEventListener("change", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                        } catch (m) { }
+                        return true;
+                    });
+                }
+            }
+            catch (m) { }
+        });
+    </script>
+    
+    <title>Radiografía del Expediente</title>
+    <link rel="stylesheet" type="text/css" href="../CSS/Pages/Radiografia/Radiografia.aspx.css?v11.13.4.0" />
+    <script type="text/javascript">
+        var verMas = {
+            Operaciones: false,
+            Remisiones: false,
+            Prestamos: false
+        };
+        var eTipoParte = {
+            Auxiliar: 1,
+            Principal: 2
+        };
+
+        var grdIndexChanging = {};
+        $(document).ready(function () {
+            obtenerExpediente();
+        });
+
+        function obtenerExpediente() {
+            //pendiente de implementación
+            JSFramework.Commons.wsAjax.doCallWS('Radiografia.aspx', 'Obtener', null,
+                /*OnRequestSuccess*/function (result, context, status, XMLHttpRequest) {
+                    if (!$.isNullOrWhiteSpace(result) && result.IsSuccess && !$.isNullOrWhiteSpace(result.ReturnData)) {
+                        cargarDatos(result.ReturnData);
+                        $("#grdOperaciones").gridView("doSearch");
+                    }
+                },
+                /*OnRequestError*/ function () {
+                    alert("se produjo un error.");
+                }, {
+                expediente: $("#hdnCodigoExpediente").val()
+            });
+        }
+
+        function cargarDatos(expediente) {
+            if (!$.isNullOrWhiteSpace(expediente)) {
+                var esExpedienteDigital = false;
+                var esExpedienteMixto = false;
+                if (!$.isNullOrWhiteSpace(expediente.DatosExtras) && expediente.DatosExtras.length > 0) {
+                    var expedienteDigitalDatoExtra = expediente.DatosExtras.find(function (item) {
+                        return item.Denominacion === "ExpedienteDigital";
+                    });
+                    var expedienteMixtoDatoExtra = expediente.DatosExtras.find(function (item) {
+                        return item.Denominacion === "ExpedienteMixto";
+                    });
+                    var Codependencias = expediente.DatosExtras.find(function (item) {
+                        return item.Denominacion === "Codependencias";
+                    });
+
+                    esExpedienteDigital = (!$.isNullOrWhiteSpace(expedienteDigitalDatoExtra) && !$.isNullOrWhiteSpace(expedienteDigitalDatoExtra.Valor) && expedienteDigitalDatoExtra.Valor.toUpperCase() !== "NO");
+                    esExpedienteMixto = (!$.isNullOrWhiteSpace(expedienteMixtoDatoExtra) && !$.isNullOrWhiteSpace(expedienteMixtoDatoExtra.Valor) && expedienteMixtoDatoExtra.Valor.toUpperCase() !== "NO");
+                }
+
+                if (esExpedienteDigital)
+                    $(".encabezadoExpediente").addClass("expedienteElectronico");
+                else if (esExpedienteMixto)
+                    $(".encabezadoExpediente").addClass("expedienteMixto");
+
+                if (Codependencias.Valor === '-')
+                    $("#lblCodependencias").text("S / D");
+                else
+                    $("#lblCodependencias").text((Codependencias.Valor || "S / D"));
+
+                $("#hdIdExpediente").text(expediente.IdExpediente);
+                $("#lblNumeroExpediente").text(expediente.NumeroExpediente);
+                if (!$.isNullOrWhiteSpace(expediente.Dependencia))
+                    $("#lblTribunal").text(expediente.Dependencia.Descripcion || "S / D");
+                else
+                    $("#lblTribunal").text("S / D");
+
+                $("#lblCaratula").text((expediente.Caratula || ""));
+                $("#lblFechaInicio").text((expediente.FechaInicio || ""));
+                if (!$.isNullOrWhiteSpace(expediente.TipoEstado))
+                    $("#lblEstado").text((expediente.TipoEstado.Descripcion || ""));
+
+                if (!$.isNullOrWhiteSpace(expediente.TipoJuicio))
+                    $("#lblTipoJuicio").text((expediente.TipoJuicio.Descripcion || ""));
+
+                if (!$.isNullOrWhiteSpace(expediente.TipoUbicacion) && !$.isNullOrWhiteSpace(expediente.TipoUbicacion.Descripcion))
+                    $("#lblUbicacion").text(expediente.TipoUbicacion.Descripcion.toUpperCase());
+                else
+                    $("#lblUbicacion").text("");
+
+                var pnlRadiografia = $("#pnlRadiografia");
+                if (expediente.Visible === true) {
+                    pnlRadiografia.show();
+                    configGridViews();
+                    $('.collapse').on('show.bs.collapse', function () {
+                        if (this.id != "tabPartes") {
+                            var $grid = $(".gridView[data-status=initial]", $(this));
+                            $grid.each(function () {
+                                if ($(this).attr("data-status") == "initial")
+                                    $(this).gridView("doSearch");
+                            });
+                        }
+                        var $accordion_seccion = $(this).parents(".card:first");
+                        $(".titulo-acordion", $accordion_seccion).addClass("selected");
+
+                    })
+                        .on('hide.bs.collapse', function () {
+                            var $accordion_seccion = $(this).parents(".card:first");
+                            $(".titulo-acordion", $accordion_seccion).removeClass("selected");
+                        });
+                }
+                else {
+                    pnlRadiografia.remove();
+                    $("#messageContainer").show();
+                    $("#lblError").text((expediente.Message || ""));
+                }
+            }
+        }
+
+        function configGridViews() {
+            var commonConfig = {
+                dataSourceType: "ws", allowSelection: false, selectionMode: 'row', useJQueryUI: false,
+                rowDataFieldId: "Id", paggingNavigationMode: 'backfo    rward', showRefresh: false, usePagging: false, pageSize: 20,
+                dataResultProperty: "ReturnData", noResultsCaption: ">> Se ha alcanzado la última página <<",
+                onPageIndexChanging: onPageIndexChanging_Event,
+                onBeforeDraw: onBeforeDraw_Event,
+                onBeforeSearch: onBeforeSearch_Event,
+                getFilterData: function () {
+                    var filterData = { expediente: $("#hdnCodigoExpediente").val() };
+                    return filterData;
+                },
+                onComplete: function (gridViewId, isSuccess, status, messageError) {
+                    hideCourtain();
+                    var grid = $("#" + gridViewId).attr("data-status", "cached");
+                    var tabId = grid.parents(".contenido:first").attr("id");
+                    $("#" + tabId + "Loading").remove();
+                },
+                onError: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            };
+            configGridOperaciones(commonConfig);
+            configGridPrestamos(commonConfig);
+            configGridComunicaciones(commonConfig);
+            configGridFianzas(commonConfig);
+            configGridPartesPrincipales(commonConfig);
+            configGridPartesAuxiliares(commonConfig);
+            configGridRelacionesEntreExpedientes(commonConfig);
+            configGridRemisiones(commonConfig);
+            configGridCuentasJudiciales(commonConfig);
+            configGridOficios(commonConfig);
+            configGridComprobantesTasa(commonConfig);
+            configGridRelacionesPartes(commonConfig);
+            configGridHechosPersonas(commonConfig);
+            configGridHechos(commonConfig);
+            configGridObjetosJuicio(commonConfig);
+            configGridSecuestros(commonConfig);
+        }
+
+        function obtenerAtributosComplementarioOperacion(codigo) {
+            var $grd = $("#grdOperaciones");
+            var $row = $("TR[CodigoOperacion='" + codigo + "']", $grd);
+            var dataSource = $row.data("itemData");
+
+            var atribComs;
+            if (!$.isNullOrWhiteSpace(dataSource.DatosExtras))
+                atribComs = dataSource.DatosExtras.filter(function (item, index) {
+                    return (!$.isNullOrWhiteSpace(item) && "Codigo" in item && !$.isNullOrWhiteSpace(item.Codigo) && item.Codigo.startsWith("AtributoComplementario"));
+                });
+            else
+                atribComs = [];
+
+            return atribComs;
+        }
+
+        function obtenerDatosParte(codigo, tipoParte) {
+            if ($.isNullOrWhiteSpace(tipoParte) || isNaN(tipoParte))
+                tipoParte = eTipoParte.Principal;
+
+            if (isFinite(tipoParte))
+                tipoParte = parseFloat(tipoParte);
+
+            var $grd;
+            if (tipoParte !== eTipoParte.Auxiliar)
+                $grd = $("#grdPartesPrincipales");
+            else
+                $grd = $("#grdPartesAuxiliares");
+
+            var $row = $("TR[IdParte='" + codigo + "']", $grd);
+            var dataSource = $row.data("itemData");
+
+            return dataSource;
+        }
+
+        function obtenerDatosPrestamo(codigo) {
+            var dataSource;
+            if (!$.isNullOrWhiteSpace(codigo)) {
+                var $grd = $("#grdPrestamos");
+                var $row = $("TR[CodigoPrestamo='" + codigo + "']", $grd);
+                dataSource = $row.data("itemData");
+            }
+            else
+                dataSource = {};
+
+            return dataSource;
+        }
+
+        function configGridOperaciones(commonConfig) {
+            $("#grdOperaciones").gridView($.extend({}, commonConfig, {
+                rowDataFieldId: "CodigoOperacion",
+                searchResultPreProcessing: function (gridViewId, data) {
+                    var returnData;
+                    if (!$.isNullOrWhiteSpace(data) && !$.isNullOrWhiteSpace(data.ReturnData) && data.ReturnData.length >= 5)
+                        $("#lnkOperacionesVerMas").show();
+                    else
+                        $("#lnkOperacionesVerMas").hide();
+
+                    return data;
+                },
+                dataSource: "Radiografia.aspx/ObtenerOperaciones",
+                onGridDrawed: function (gridViewId) {
+                    var grid = $("#" + gridViewId);
+                    $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", grid).hide();
+                },
+                onRowDataBound: function (row, gridViewId, data, rowIndex) {
+                    switch (data.TipoOperacion.IdTipoOperacion) {
+                        case -1:
+                        case -2:
+                            $(".colUbicacion", row).text(" - ");
+                            $(".verPDF", row).text(" - ");
+                            $(".verPDFCertificado", row).text(" - ");
+                            $(".btnNotificar", row).text(" - ")
+                            break;
+                        case -3:
+                            $(row).addClass("trEscrito");
+                            $(".celdaTipoOperacion>.divCellData", row).addClass("linkButtonNormal").on("click", function () { verTexto(data.CodigoOperacion, -3) });
+                            //$(".verPDF", row).text(" - ");
+                            $(".verPDFCertificado", row).text(" - ");
+                            $(".btnNotificar", row).text(" - ")
+                            break;
+                        default:
+                            $(".celdaTipoOperacion", row).wrap("<span class='linkButtonNormal' onclick='verTexto(\"" + data.CodigoOperacion + "\")'></span>");
+                            if (!data.Firmada)
+                                $(".verPDFCertificado", row).text(" - ");
+                            break;
+                    }
+                    if (data.Firmada)
+                        $(".celdaTipoOperacion>.divCellData", row).append("<img title=\"Firmada digitalmente\" src=\"../Images/Firma.png\">");
+
+                },
+                columns: [{
+                    visible: false,
+                    dataFieldName: "CodigoOperacion",
+                    description: "CodigoOperacion",
+                    includeInResult: true
+                }, {
+                        visible: false,
+                        dataFieldName: "CodigoTipoOperacion",
+                        description: "CodigoTipoOperacion",
+                        includeInResult: true
+                    }, {
+                        visible: false,
+                        dataFieldName: "TipoOperacion.IdTipoOperacion",
+                        description: "IdTipoOperacion",
+                        includeInResult: true
+                    }, {
+                        visible: true,
+                        dataFieldName: "Fecha",
+                        description: "Fecha",
+                        width: '100px',
+                        includeInResult: false
+                    }, {
+                        visible: true,
+                        dataFieldName: "TipoOperacion.Descripcion",
+                        description: "Tipo de operación",
+                        includeInResult: false,
+                        cssClass: 'celdaTipoOperacion'
+                    }, {
+                        visible: false,
+                        dataFieldName: "Ubicacion",
+                        description: "Ubicación",
+                        includeInResult: true,
+                        cssClass: "colUbicacion"
+                    }, {
+                        visible: false,
+                        dataFieldName: "UbicacionNueva",
+                        description: "UbicacionNueva",
+                        includeInResult: true
+                    }, {
+                        visible: false,
+                        dataFieldName: "Estado",
+                        description: "Estado",
+                        includeInResult: true
+                    }, {
+                        visible: false,
+                        dataFieldName: "EstadoNuevo",
+                        description: "EstadoNuevo",
+                        includeInResult: true
+                    }, {
+                        visible: false,
+                        dataFieldName: "EsEscrito",
+                        description: "EsEscrito",
+                        includeInResult: true
+                    }, {
+                        visible: false,
+                        dataFieldName: "DatosExtras",
+                        description: "DatosExtras",
+                        includeInResult: true
+                    }, {
+                        visible: true,
+                        description: "PDF",
+                        type: 'control',
+                        includeInResult: false,
+                        cssClass: 'verPDF',
+                        width: '100px',
+                        Controls: [{
+                            label: "../Images/download.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                imprimirOperacion(src, data.CodigoOperacion, data["TipoOperacion.IdTipoOperacion"], 0);
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer download',
+                            showInHeader: false,
+                            alt: 'Descargar PDF'
+                        }]
+                    }, {
+                        visible: true,
+                        description: "PDF Certificado",
+                        type: 'control',
+                        includeInResult: false,
+                        cssClass: 'verPDFCertificado',
+                        width: '100px',
+                        Controls: [{
+                            label: "../Images/download.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                imprimirOperacion(src, data.CodigoOperacion, data["TipoOperacion.IdTipoOperacion"], 1);
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer download',
+                            showInHeader: false,
+                            alt: 'Descargar PDF Certificado'
+                        }]
+                    }, {
+                        visible: true,
+                        description: "Más Datos",
+                        type: 'control',
+                        includeInResult: false,
+                        width: '120px',
+                        Controls: [{
+                            label: "../Images/ver-detalle.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                masDatos(data);
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer',
+                            showInHeader: false,
+                            alt: 'Ver Más Datos'
+                        }]
+                    }, {
+                        //Agregar el permiso necesario
+                        visible: true,
+                        description: "Notificar",
+                        type: 'control',
+                        includeInResult: false,
+                        cssClass: 'btnNotificar',
+                        width: '120px',
+                        Controls: [{
+                            label: "../Images/message.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                generarCedula(data.CodigoOperacion);
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer',
+                            showInHeader: false,
+                            alt: 'Nueva e-Cédula',
+                        }]
+                    }]
+            }), false);
+        }
+        function configGridPrestamos(commonConfig) {
+            $("#grdPrestamos").gridView($.extend({}, commonConfig, {
+                rowDataFieldId: "CodigoPrestamo",
+                searchResultPreProcessing: function (gridViewId, data) {
+                    var returnData;
+                    if (!$.isNullOrWhiteSpace(data) && !$.isNullOrWhiteSpace(data.ReturnData) && data.ReturnData.length >= 5)
+                        $("#lnkPrestamosVerMas").show();
+                    else
+                        $("#lnkPrestamosVerMas").hide();
+
+                    return data;
+                },
+                dataSource: "Radiografia.aspx/ObtenerPrestamos",
+                includeOriginalDataSourceInResult: true,
+                onGridDrawed: function (gridViewId) {
+                    var grid = $("#" + gridViewId);
+                    $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", grid).hide();
+                },
+                columns: [{
+                    visible: false,
+                    dataFieldName: "CodigoPrestamo",
+                    description: "CodigoPrestamo",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Cuerpo",
+                    description: "Cuerpo",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "FechaPrestamo",
+                    description: "Fecha Préstamo",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "FechaDevolucion",
+                    description: "Fecha Devolución",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "DatosExtras",
+                    description: "Prestado A",
+                    includeInResult: false,
+                    dataEval: function (itemData) {
+                        var destinatario = null;
+                        if (!$.isNullOrWhiteSpace(itemData) && itemData.length > 0) {
+                            destinatario = itemData.find(function (item) {
+                                return !$.isNullOrWhiteSpace(item) && !$.isNullOrWhiteSpace(item.Denominacion) && (item.Denominacion.toLowerCase() == "destinatario");
+                            });
+                        }
+                        return destinatario.Valor;
+                    }
+                }, {
+                    visible: true,
+                    description: "Recibo",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            verPrestamo(data.CodigoPrestamo);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer btnSaldo',
+                        showInHeader: false,
+                        alt: 'Ver recibo del préstamo'
+                    }]
+                }, {
+                    visible: true,
+                    description: "Detalle",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            verMasDatosPrestamo(data.CodigoPrestamo);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer btnSaldo',
+                        showInHeader: false,
+                        alt: 'Ver recibo del préstamo'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridPartesPrincipales(commonConfig) {
+            $("#grdPartesPrincipales").gridView($.extend({}, commonConfig, {
+                rowDataFieldId: "IdParte",
+                dataSource: "Radiografia.aspx/ObtenerPartes",
+                getFilterData: function () {
+                    var filterData = { expediente: $("#hdnCodigoExpediente").val(), tipoParte: 2 };
+                    return filterData;
+                },
+                includeOriginalDataSourceInResult: true,
+                columns: [{
+                    visible: false,
+                    description: "IdParte",
+                    dataFieldName: "IdParte",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Rol",
+                    dataFieldName: "TipoRol.Descripcion",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Nombre",
+                    description: "Nombre y Apellido",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Más Datos",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            verDatosParte(data.IdParte, eTipoParte.Principal);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer',
+                        showInHeader: false,
+                        alt: 'Ver Más Datos'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridPartesAuxiliares(commonConfig) {
+            $("#grdPartesAuxiliares").gridView($.extend({}, commonConfig, {
+                rowDataFieldId: "IdParte",
+                dataSource: "Radiografia.aspx/ObtenerPartes",
+                getFilterData: function () {
+                    var filterData = { expediente: $("#hdnCodigoExpediente").val(), tipoParte: 1 };
+                    return filterData;
+                },
+                includeOriginalDataSourceInResult: true,
+                columns: [{
+                    visible: false,
+                    description: "IdParte",
+                    dataFieldName: "IdParte",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Rol",
+                    dataFieldName: "TipoRol.Descripcion",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Nombre",
+                    description: "Nombre y Apellido",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Más Datos",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            verDatosParte(data.IdParte, eTipoParte.Auxiliar);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer',
+                        showInHeader: false,
+                        alt: 'Ver Más Datos'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridRelacionesEntreExpedientes(commonConfig) {
+            $("#grdRelacionesEntreExpedientes").gridView($.extend({}, commonConfig, {
+                dataSource: "Radiografia.aspx/ObtenerRelaciones",
+                searchResultPreProcessing: function (gridViewId, data) {
+                    var resultData = { ReturnData: [] };
+                    if (!$.isNullOrWhiteSpace(data) && (data.IsSuccess === true)) {
+                        if (!$.isNullOrWhiteSpace(data.ReturnData) && !$.isNullOrWhiteSpace(data.ReturnData.Relaciones)) {
+                            var expediente = data.ReturnData;
+                            //agrega al array los expedientes en donde es principal
+                            if (!$.isNullOrWhiteSpace(expediente.Relaciones.Principales) && !$.isNullOrWhiteSpace(expediente.Relaciones.Principales.Relaciones)) {
+                                expediente.Relaciones.Principales.Relaciones.forEach(function (item, index) {
+                                    item.Expediente.DatosExtras.forEach(function (dato, index) {
+                                        if (dato.Denominacion == 'Confidencial' && dato.Valor == 'NO')
+                                            resultData.ReturnData.push({
+                                                "IdRelacion": item.IdRelacion,
+                                                "IdExpediente": expediente.IdExpediente,
+                                                "Caratula": expediente.Caratula,
+                                                "IdExpediente2": (!$.isNullOrWhiteSpace(item.Expediente) != null ? item.Expediente.IdExpediente : " - "),
+                                                "Caratula2": (!$.isNullOrWhiteSpace(item.Expediente) != null ? item.Expediente.Caratula : " - "),
+                                                "TipoRelacion": (!$.isNullOrWhiteSpace(item.TipoRelacion) ? item.TipoRelacion.Descripcion : " - "),
+                                                "FechaRelacion": (!$.isNullOrWhiteSpace(item.FechaRelacion) ? item.FechaRelacion : " - ")
+                                            });
+
+                                    });
+                                });
+                            }
+                            //agrega al array los expedientes en donde es secundario
+                            if (!$.isNullOrWhiteSpace(expediente.Relaciones.Secundarias) && !$.isNullOrWhiteSpace(expediente.Relaciones.Secundarias.Relaciones)) {
+                                expediente.Relaciones.Secundarias.Relaciones.forEach(function (item, index) {
+                                    item.Expediente.DatosExtras.forEach(function (dato, index) {
+                                        if (dato.Denominacion == 'Confidencial' && dato.Valor == 'NO')
+                                            resultData.ReturnData.push({
+                                                "IdRelacion": item.IdRelacion,
+                                                "IdExpediente": (!$.isNullOrWhiteSpace(item.Expediente) != null ? item.Expediente.IdExpediente : " - "),
+                                                "Caratula": (!$.isNullOrWhiteSpace(item.Expediente) != null ? item.Expediente.Caratula : " - "),
+                                                "IdExpediente2": expediente.IdExpediente,
+                                                "Caratula2": expediente.Caratula,
+                                                "TipoRelacion": (!$.isNullOrWhiteSpace(item.TipoRelacion) ? item.TipoRelacion.Descripcion : " - "),
+                                                "FechaRelacion": (!$.isNullOrWhiteSpace(item.FechaRelacion) ? item.FechaRelacion : " - ")
+                                            });
+                                    });
+                                });
+                            }
+                        }
+                    }
+                    else
+                        alert(data.MessageError);
+
+                    return resultData;
+                },
+                columns: [{
+                    visible: false,
+                    dataFieldName: "IdRelacion",
+                    description: "idRelacionEntreExpedientes",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "IdExpediente",
+                    description: "Exp. 1",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Caratula",
+                    description: "Carátula",
+                    cssClass: 'colCaratula',
+                    includeInResult: false
+                },
+                {
+                    visible: true,
+                    dataFieldName: "IdExpediente2",
+                    description: "Exp. 2",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Caratula2",
+                    description: "Carátula",
+                    cssClass: 'colCaratula',
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "TipoRelacion",
+                    description: "Tipo de relación",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "FechaRelacion",
+                    description: "Fecha",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: false
+                }]
+            }), false);
+        }
+        function configGridRemisiones(commonConfig) {
+            $("#grdRemisiones").gridView($.extend({}, commonConfig, {
+                searchResultPreProcessing: function (gridViewId, data) {
+                    var returnData;
+                    if (!$.isNullOrWhiteSpace(data) && !$.isNullOrWhiteSpace(data.ReturnData) && data.ReturnData.length >= 5)
+                        $("#lnkRemisionesVerMas").show();
+                    else
+                        $("#lnkRemisionesVerMas").hide();
+
+                    return data;
+                },
+                onGridDrawed: function (gridViewId) {
+                    var grid = $("#" + gridViewId);
+                    $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", grid).hide();
+                },
+                dataSource: "Radiografia.aspx/ObtenerRemisiones",
+                columns: [{
+                    visible: false,
+                    description: "IdRemision",
+                    dataFieldName: "IdRemision",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Fecha",
+                    dataFieldName: "Fecha",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Origen.Descripcion",
+                    description: "Dependencia de Origen",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Destino.Descripcion",
+                    description: "Dependencia de Destino",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "TipoRemision.Descripcion",
+                    description: "Tipo de remisión",
+                    includeInResult: false
+                }]
+            }), false);
+        }
+        function configGridCuentasJudiciales(commonConfig) {
+            $("#grdCuentasJudiciales").gridView($.extend({}, commonConfig, {
+                dataSource: "Radiografia.aspx/ObtenerCuentasJudiciales",
+                columns: [{
+                    visible: false,
+                    description: "CodigoCuenta",
+                    dataFieldName: "CodigoCuenta",
+                    includeInResult: true
+                },
+                {
+                    visible: false,
+                    description: "CodigoSucursal",
+                    dataFieldName: "CodigoSucursal",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Nº Cuenta",
+                    dataFieldName: "NumeroCuenta",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    dataFieldName: "Dependencia.Descripcion",
+                    description: "Dependencia de la Cuenta",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Saldo",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            verDatosCuentas(data.CodigoCuenta, data.CodigoSucursal);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer btnSaldo',
+                        showInHeader: false,
+                        alt: 'Ver Saldo'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridComunicaciones(commonConfig) {
+            $("#grdComunicaciones").gridView($.extend({}, commonConfig,
+                {
+                    usePagging: true,
+                    dataSource: "Radiografia.aspx/ObtenerComunicaciones",
+                    dataResultProperty: 'ReturnData',
+                    columns: [{
+                        visible: false,
+                        description: "Id",
+                        dataFieldName: "Id",
+                        includeInResult: true
+                    },
+                    {
+                        visible: true,
+                        description: "Descripción",
+                        dataFieldName: "Descripcion",
+                        includeInResult: false
+                    }, {
+                        visible: true,
+                        dataFieldName: "TipoComunicacion",
+                        description: "Tipo de Comunicación",
+                        includeInResult: false
+                    },
+                    {
+                        visible: true,
+                        description: "Estado",
+                        dataFieldName: "Estado",
+                        includeInResult: false
+                    },
+                    {
+                        visible: true,
+                        dataFieldName: "FechaAlta",
+                        description: "Fecha",
+                        includeInResult: false
+                    }, {
+                        visible: true,
+                        description: "Ver",
+                        type: 'control',
+                        includeInResult: false,
+                        Controls: [{
+                            label: "../Images/ver-detalle.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                if (typeof data !== "undefined" && data !== null) {
+                                    descargarComunicacion(src, data.Id);
+                                }
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer btnSaldo download',
+                            showInHeader: false,
+                            alt: 'Descargar Comunicación'
+                        }]
+                    }]
+                }), false);
+        }
+        function configGridFianzas(commonConfig) {
+            $("#grdFianzas").gridView($.extend({}, commonConfig, {
+                dataSource: "Radiografia.aspx/ObtenerFianzas",
+                dataResultProperty: 'ReturnData',
+                columns: [
+                    {
+                        visible: false,
+                        description: "Id",
+                        dataFieldName: "Id",
+                        includeInResult: true
+                    },
+                    {
+                        visible: true,
+                        dataFieldName: "Fecha",
+                        description: "Fecha",
+                        includeInResult: false
+                    },
+                    {
+                        visible: true,
+                        description: "Nombre",
+                        dataFieldName: "Nombre",
+                        includeInResult: false
+                    },
+                    {
+                        visible: true,
+                        description: "Estado",
+                        dataFieldName: "Estado",
+                        includeInResult: false
+                    },
+                    {
+                        visible: true,
+                        description: "Detalle",
+                        type: 'control',
+                        includeInResult: false,
+                        Controls: [{
+                            label: "../Images/ver-detalle.png",
+                            onClick: function (row, id, rowType, data, src) {
+                                var size = getDialogSize(.6, .5, 600, 300);
+                                if (typeof data !== "undefined" && data !== null) {
+                                    verFianza(data.Id);
+                                }
+                            },
+                            type: 'image',
+                            cssClass: 'ImageButton btnVer btnSaldo',
+                            showInHeader: false,
+                            alt: 'Ver detalle de la Fianza'
+                        }]
+                    }]
+            }), false);
+        }
+        function configGridOficios(commonConfig) {
+            $("#grdOficios").gridView($.extend({}, commonConfig, {
+                searchResultPreProcessing: function (gridViewId, data) {
+                    var retVal = [];
+                    if (!$.isNullOrWhiteSpace(data) && !$.isNullOrWhiteSpace(data.ReturnData)) {
+                        data.ReturnData.forEach(function (item, index) {
+                            if (!$.isNullOrWhiteSpace(item.Oficios) && item.Oficios.length > 0) {
+                                item.Oficios.forEach(function (oficio, indexOficio) {
+                                    var newLength = retVal.push(oficio);
+                                    //se agrega la descripción al oficio.
+                                    var nuevoOficio = retVal[newLength - 1];
+                                    if (!$.isNullOrWhiteSpace(item.TipoOperacion))
+                                        nuevoOficio["TipoOperacion"] = item.TipoOperacion.Descripcion;
+                                    else
+                                        nuevoOficio["TipoOperacion"] = " - ";
+
+                                    if (!$.isNullOrWhiteSpace(item.Dependencia))
+                                        nuevoOficio["Dependencia"] = item.Dependencia.Descripcion;
+                                    else
+                                        nuevoOficio["Dependencia"] = " - ";
+
+                                    nuevoOficio["TipoEstado"] = { "IdTipoEstado": nuevoOficio.Estado, Descripcion: null };
+                                    if (!$.isNullOrWhiteSpace(nuevoOficio.Estado) && (nuevoOficio.Estado == 2))
+                                        nuevoOficio["TipoEstado"]["Descripcion"] = "Respondido";
+                                    else
+                                        nuevoOficio["TipoEstado"]["Descripcion"] = "Enviado";
+
+                                    if ($.isNullOrWhiteSpace(nuevoOficio.Respuesta))
+                                        nuevoOficio.Respuesta = { TextoRespuesta: ' - ' };
+                                });
+                            }
+                        });
+                    }
+                    else
+                        retVal = [];
+
+                    if (retVal.length >= 5)
+                        $("#lnkOficiosVerMas").show();
+                    else
+                        $("#lnkOficiosVerMas").hide();
+
+                    return retVal;
+                },
+                onRowDataBound: function (row, gridViewId, data, rowIndex) {
+                    //Mostrar | ocultar respuesta
+                    if ("TipoEstado" in data && !$.isNullOrWhiteSpace(data.TipoEstado) && "IdTipoEstado" in data.TipoEstado && data.TipoEstado.IdTipoEstado === 2) {
+                        $(".btnVerOficioRespuesta", row).show();
+                    }
+                    else
+                        $(".btnVerOficioRespuesta", row).hide();
+
+                },
+                onGridDrawed: function (gridViewId) {
+                    var grid = $("#" + gridViewId);
+                    $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", grid).hide();
+                },
+                dataSource: 'Radiografia.aspx/ObtenerOficios',
+                dataResultProperty: null,
+                columns: [{
+                    visible: false,
+                    dataFieldName: "IdOficio",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Fecha",
+                    description: "Fecha",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: false
+                },
+                {
+                    visible: true,
+                    dataFieldName: "TipoOperacion",
+                    description: "Tipo Operación",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Tipo Oficio",
+                    dataFieldName: "TipoOficio.Descripcion",
+                    includeInResult: false
+                }, {
+                    visible: false,
+                    description: "Tipo Oficio",
+                    dataFieldName: "TipoOficio.IdTipoOficio",
+                    includeInResult: true
+                }, {
+                    visible: true,
+                    dataFieldName: "Dependencia",
+                    description: "Dependencia",
+                    includeInResult: false
+                }, {
+                    visible: false,
+                    dataFieldName: "Estado",
+                    description: "Estado",
+                    includeInResult: true
+                },
+                    , {
+                    visible: true,
+                    dataFieldName: "TipoEstado.Descripcion",
+                    description: "Estado",
+                    includeInResult: false
+                }, {
+                    visible: false,
+                    dataFieldName: "OficioRespuesta",
+                    description: "OficioRespuesta",
+                    includeInResult: true
+                }, {
+                    visible: true,
+                    description: "Detalle",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            if ("OficioRespuesta" in data && !$.isNullOrWhiteSpace(data.OficioRespuesta)) {
+                                verOficioRespuesta(data);
+                            }
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer btnVerOficioRespuesta',
+                        showInHeader: false,
+                        alt: 'Ver respuesta del oficio'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridComprobantesTasa(commonConfig) {
+            $("#grdComprobantesTasa").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerComprobantesTasa',
+                columns: [{
+                    visible: true,
+                    dataFieldName: "IdComprobanteTasa",
+                    description: 'Nro. Comprobante',
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "FechaPago",
+                    description: "Fecha pago",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: false
+                },
+                {
+                    visible: false,
+                    dataFieldName: "link",
+                    description: "link",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Imprimir",
+                    type: 'control',
+                    includeInResult: true,
+                    Controls: [{
+                        template: "<span class='glyphicon glyphicon-print ImageButton'></span>",
+                        onClick: function (row, id, rowType, data, src) {
+                            if (rowType !== "header") {
+                                var size = getDialogSize(.6, .5, 600, 300);
+                                if (typeof data !== "undefined" && data !== null) {
+                                    var size = getDialogSize();
+                                    OpenPage(data.link, size.width, size.height, null, '');
+                                }
+                            }
+                        },
+                        showInHeader: false,
+                        alt: 'Imprimir Comprobante'
+                    }]
+                }]
+            }), false);
+        }
+        function configGridRelacionesPartes(commonConfig) {
+            $("#grdRelacionesPartes").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerRelacionesEntrePartes',
+                columns: [{
+                    visible: false,
+                    dataFieldName: "IdRelacion",
+                    description: 'IdRelacion',
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "TipoRol",
+                    description: "Rol",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Nombre",
+                    description: "Partes Principales",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "PatrocinanteNombre",
+                    description: "Patrocinado Por",
+                    includeInResult: true
+                },
+                {
+                    visible: false,
+                    dataFieldName: "FechaDesde",
+                    includeInResult: true
+                },
+                {
+                    visible: false,
+                    dataFieldName: "Observaciones",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Más Datos",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            MasDatosRelPart(data);
+                        },
+                        type: 'image',
+                        cssClass: 'ImageButton btnVer',
+                        showInHeader: false,
+                        alt: 'Ver Más Datos'
+                    }]
+                }]
+            }), false);
+        }
+
+        function configGridHechos(commonConfig) {
+            $("#grdHechos").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerHechos',
+                columns: [{
+                    visible: true,
+                    dataFieldName: "FechaDesde",
+                    description: "Fecha Desde",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "FechaHasta",
+                    description: "Fecha Hasta",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "DescripTipoHecho",
+                    description: "Descripción",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Tentativa",
+                    description: "Tentativa",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Reiterado",
+                    description: "Reiterado",
+                    includeInResult: true
+                }]
+            }), false);
+        }
+        function configGridHechosPersonas(commonConfig) {
+            $("#grdHechosPersonas").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerHechosPersonas',
+                columns: [{
+                    visible: true,
+                    dataFieldName: "ParteNombre",
+                    description: "Nombre",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "TipoHecho",
+                    description: "Hecho",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "TipoParticipacion",
+                    description: "Participación",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Tentativa",
+                    description: "Tentativa",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Reiterado",
+                    description: "Reiterado",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Resolucion.TipoResolucionParticipacion.Descripcion",
+                    description: "Resolución",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Resolucion.FechaResolucion",
+                    description: "Fecha Resolución",
+                    columnDataType: 'date',
+                    dataEval: function (fieldValue) {
+                        if (fieldValue != null)
+                            fieldValue = fieldValue.getDate() + "/" + (fieldValue.getMonth() + 1) + "/" + fieldValue.getFullYear();
+
+                        return fieldValue;
+                    },
+                    includeInResult: true
+                }]
+            }), false);
+        }
+        function configGridObjetosJuicio(commonConfig) {
+            $("#grdObjetosJuicio").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerObjetosJuicio',
+                columns: [{
+                    visible: true,
+                    dataFieldName: "Descripcion",
+                    description: 'Tipo de Objeto Juicio',
+                    includeInResult: false
+                }
+                ]
+            }), false);
+        }
+        function configGridSecuestros(commonConfig) {
+            $("#grdSecuestros").gridView($.extend({}, commonConfig, {
+                dataSource: 'Radiografia.aspx/ObtenerSecuestros',
+                columns: [{
+                    visible: true,
+                    dataFieldName: "NumeroRegistro",
+                    description: "N° de Registro",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Tipo",
+                    description: "Tipo",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "Observaciones",
+                    description: "Observaciones",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    dataFieldName: "FechaSecuestro",
+                    description: "Fecha Secuestro",
+                    includeInResult: true
+                }]
+            }), false);
+        }
+
+        function verMasDatosPrestamo(idPrestamo) {
+            try {
+                var sURL = 'MasDatosPrestamo.aspx?id=' + idPrestamo;
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verPrestamo(idPrestamo) {
+            try {
+                var sURL = '../_Prestamos/PrestamosVer.aspx?idPrestamo=' + idPrestamo;
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verTexto(id, idTipoOperacion) {
+            try {
+                var sURL = 'operacion.aspx?o=';
+                if (!$.isNullOrWhiteSpace(idTipoOperacion) && idTipoOperacion === -3) {
+                    sURL = 'VerEscrito.aspx?id=';
+                }
+                sURL += id;
+
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verOficioRespuesta(oficio) {
+            try {
+                masDatosOficio(oficio);
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function masDatos(data) {
+            try {
+                if (!$.isNullOrWhiteSpace(data)) {
+                    if (data["TipoOperacion.IdTipoOperacion"] == -1)
+                        masDatosUbicacion(data.Ubicacion, data.UbicacionNueva);
+                    else if (data["TipoOperacion.IdTipoOperacion"] == -2)
+                        masDatosEstado(data.Estado, data.EstadoNuevo);
+                    else
+                        masDatosOperacion($("#hdnCodigoExpediente").val(), data.CodigoOperacion, data.EsEscrito, data["TipoOperacion.IdTipoOperacion"]);
+                }
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function generarCedula(CodigoOperacion) {
+            try {
+                var idExpediente = $('#hdnCodigoExpediente').val();
+                var sURL = '../_eCedulas/CedulasGenerar.aspx?idOp=' + CodigoOperacion + '&idExpediente=' + idExpediente;
+                var size = getDialogSize(.95, .95);
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verDatosParte(idParte, idTipoParte) {
+            try {
+                var sURL = 'VerDatosParte.aspx?id=' + idParte + '&idTipoParte=' + idTipoParte;
+                var size = getDialogSize(.95, .95);
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function MasDatosRelPart(data) {
+            try {
+                var size = getDialogSize(.5, .5);
+                var $masDatos = $("#masDatosTemplate");
+                $(".divMasDatosTitle", $masDatos).text("Patrocinio");
+                $(".divPreviousHeader", $masDatos).text("Fecha desde");
+                $(".divCurrentHeader", $masDatos).text("Observación");
+                $(".divPreviousData", $masDatos).text(data.FechaDesde);
+                $(".divCurrentData", $masDatos).text(data.Observaciones);
+                $masDatos.webDialog({
+                    width: size.width,
+                    height: size.height,
+                });
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+        function masDatosOperacion(idExpediente, idOperacion, esEscrito, idTipoOperacion) {
+            try {
+                var sURL = 'MasDatos.aspx?E=' + idExpediente + '&O=' + idOperacion + '&TE=' + esEscrito + '&TO=' + idTipoOperacion;
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function masDatosUbicacion(ubicacionAnterior, ubicacionNueva) {
+            var size = getDialogSize(.5, .5);
+            var $masDatos = $("#masDatosTemplate");
+            $(".divMasDatosTitle", $masDatos).text("Cambios de ubicación");
+            $(".divPreviousHeader", $masDatos).text("Ubicación Anterior");
+            $(".divCurrentHeader", $masDatos).text("Ubicación Nueva");
+            $(".divPreviousData", $masDatos).text(ubicacionAnterior);
+            $(".divCurrentData", $masDatos).text(ubicacionNueva);
+            $masDatos.webDialog({
+                width: size.width,
+                height: size.height,
+            });
+        }
+        function masDatosEstado(estadoAnterior, estadoNuevo) {
+            var size = getDialogSize(.5, .5);
+
+            var $masDatos = $("#masDatosTemplate");
+            $(".divMasDatosTitle", $masDatos).text("Cambios de estado");
+            $(".divPreviousHeader", $masDatos).text("Estado Anterior");
+            $(".divCurrentHeader", $masDatos).text("Estado Nuevo");
+            $(".divPreviousData", $masDatos).text(estadoAnterior);
+            $(".divCurrentData", $masDatos).text(estadoNuevo);
+            $masDatos.webDialog({
+                width: size.width,
+                height: size.height,
+            });
+        }
+        function masDatosOficio(oficio) {
+            if ($.isNullOrWhiteSpace(oficio) || $.isNullOrWhiteSpace(oficio.OficioRespuesta)) {
+                alert("Los datos del oficio son inválidos, si el problema persiste comuníquese con asistencia al usuario");
+            }
+            else {
+                var size = getDialogSize(.5, .5);
+                var $masDatos = $("<div></div>");
+                var $container = $("#masDatosTemplate").clone();
+                $container.addClass("masDatosOficios");
+                var $title = $(".divMasDatosTitle", $container);
+                $title.text("Respuesta del Oficio");
+
+                oficioRespuesta = oficio.OficioRespuesta;
+
+                var $body = $(".masDatosBody", $container);
+                $body.empty();
+                var date = new Date(+oficioRespuesta.Fecha.replace(/\/Date\((\d+)\)\//, '$1'));
+                var fechaRespuesta = "";
+                if (isNaN(date))
+                    fechaRespuesta = "-";
+                else
+                    fechaRespuesta = (date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() || " - ");
+
+                $body.append('<div class="row masDatoRowData">' +
+                    '<div class="col masDatoRow masDatosCell divTexto"><span><b>Fecha de Respuesta: </b>' + fechaRespuesta + '</span></div>' +
+                    '</div>');
+
+                if (!$.isNullOrWhiteSpace(oficioRespuesta.TextoRespuesta))
+                    $body.append('<div class="row masDatoRowData">' +
+                        '<div class="col masDatoRow divTexto">' + (oficioRespuesta.TextoRespuesta || " - ") + '</div>' +
+                        '</div>');
+                if (!$.isNullOrWhiteSpace(oficioRespuesta.Archivos) && oficioRespuesta.Archivos.length > 0) {
+                    oficioRespuesta.Archivos.forEach(function (archivo, index) {
+                        $body.append('<div class="row masDatoRowData" data-idoficio="' + oficio.IdOficio + '">' +
+                            '<div class="col masDatoRow divFile download" onclick="descargarOficioRespuesta(this, ' + oficio.IdOficio + ', ' + oficio["TipoOficio.IdTipoOficio"] + ', ' + archivo.IdArchivo + ');"><span class="divNombreArchivo">' + (archivo.Nombre || " - ") + '</span><img class="btnDescargar" src="../Images/download.png" /> </div>' +
+                            '</div>');
+                    });
+                }
+                if (!$.isNullOrWhiteSpace(oficioRespuesta.Operacion)) {
+                    var descripcion;
+                    if (!$.isNullOrWhiteSpace(oficioRespuesta.Operacion.TipoOperacion) && !$.isNullOrWhiteSpace(oficioRespuesta.Operacion.TipoOperacion.Descripcion))
+                        descripcion = oficioRespuesta.Operacion.TipoOperacion.Descripcion;
+
+                    $body.append('<div class="row masDatoRowData">' +
+                        '<div class="col masDatoRow divFile download" onclick="imprimirOperacion(this, ' + oficioRespuesta.Operacion.IdOperacion + ', ' + oficioRespuesta.Operacion.TipoOperacion.IdTipoOperacion + ', 0);"><span class="divNombreArchivo">' + (descripcion || " descargar respuesta ") + '</span><img class="ImageButton btnVer" src="../Images/download.png" /></div>' +
+                        '</div>');
+                }
+
+                $masDatos.append($container);
+                $masDatos.webDialog({
+                    width: size.width,
+                    height: size.height
+                });
+            }
+        }
+        function descargarComunicacion(src, id) {
+            try {
+                if ($.isNullOrWhiteSpace($(src).attr("data-downloadtoken"))) {
+                    var downloadToken = (new Date().getTime());
+                    var sURL = 'DownloadComunicacion.ashx?Id=' + id + '&downloadToken=' + downloadToken;
+                    window.location.href = sURL;
+
+                    $(src).attr("data-downloadtoken", downloadToken)
+                        .addClass("downloading");
+
+                    initDownloadCompleteValidation(downloadToken, function (downloadToken) {
+                        $(".download[data-downloadtoken=" + downloadToken + "]")
+                            .removeAttr("data-downloadtoken")
+                            .removeClass("downloading");
+                    });
+                }
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function imprimirOperacion(src, idOperacion, idTipoOperacion, Certificada) {
+            try {
+                if ($.isNullOrWhiteSpace($(src).attr("data-downloadtoken"))) {
+                    var downloadToken = (new Date().getTime());
+                    var sURL;
+
+                    if (Certificada)
+                        sURL = 'DownloadOperacionPDFCertificado.ashx?IdOperacion=' + idOperacion + '&idTipoOperacion=' + idTipoOperacion + '&downloadToken=' + downloadToken;
+                    else
+                        sURL = 'DownloadOperacionPDF.ashx?IdOperacion=' + idOperacion + '&idTipoOperacion=' + idTipoOperacion + '&downloadToken=' + downloadToken;
+
+                    window.location.href = sURL;
+
+                    $(src).attr("data-downloadtoken", downloadToken)
+                        .addClass("downloading");
+
+                    initDownloadCompleteValidation(downloadToken, function (downloadToken) {
+                        $(".download[data-downloadtoken=" + downloadToken + "]")
+                            .removeAttr("data-downloadtoken")
+                            .removeClass("downloading");
+                    });
+                }
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function descargarOficioRespuesta(src, idOficio, idTipoOficio, idArchivo) {
+            try {
+                if ($.isNullOrWhiteSpace($(src).attr("data-downloadtoken"))) {
+                    JSFramework.Commons.wsAjax.doCallWS('Radiografia.aspx', 'ObtenerArchivo', null,
+                        /*OnRequestSuccess*/
+                        function (result, context, status, XMLHttpRequest) {
+                            if (!$.isNullOrWhiteSpace(result)) {
+                                if (result.IsSuccess) {
+                                    if (!$.isNullOrWhiteSpace(result.ReturnData) && !$.isNullOrWhiteSpace(result.ReturnData.URI)) {
+                                        window.location.href = result.ReturnData.URI;
+                                        if (!$.isNullOrWhiteSpace(result.ReturnData.DownloadToken) && result.ReturnData.DownloadToken >= 0) {
+                                            $(src)
+                                                .attr("data-downloadtoken", result.ReturnData.DownloadToken)
+                                                .addClass("downloading");
+
+                                            initDownloadCompleteValidation(result.ReturnData.DownloadToken, function (downloadToken) {
+                                                $(".download[data-downloadtoken=" + downloadToken + "]")
+                                                    .removeAttr("data-downloadtoken")
+                                                    .removeClass("downloading");
+                                            });
+                                        }
+                                    }
+                                    else
+                                        alert("El servicio no devolvió un resultado válido.");
+                                }
+                                else
+                                    alert(result.MessageError);
+                            }
+                        },
+                        /*OnRequestError*/
+                        function () {
+                            alert("se produjo un error al intentar descargar la respuesta.");
+                        }, {
+                        codigo: idOficio,
+                        tipo: 'oficiorespuesta',
+                        idTipoOficio: idTipoOficio,
+                        idArchivo: idArchivo
+                    });
+                }
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verDatosCuentas(nroCuenta, idSucursal) {
+            try {
+                var sURL = '../_CuentasJudiciales/VerDatosCuenta.aspx?NroCuenta=' + nroCuenta + '&IdSucursalBanco=' + idSucursal;
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+        function verFianza(idFianza) {
+            try {
+                var sURL = '../_Fianzas/FianzasVer.aspx?idFianza=' + idFianza;
+                var size = getDialogSize();
+                OpenPage(sURL, size.width, size.height, null, '');
+            }
+            catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function btnCerrar_ClientClick() {
+            var webDialogId = $('.modalDialog', window.parent.document).attr("webDialogId");
+            if (typeof webDialogId !== "undefined" && webDialogId !== null)
+                window.parent.CloseDialog(webDialogId);
+            else
+                window.close();
+        }
+        function onBeforeDraw_Event(gridViewId, data) {
+            var retVal = true;
+            if (typeof data !== "undefined" && data.hasOwnProperty("IsSuccess") && !data.IsSuccess) {
+                retVal = false;
+                alert(data.MessageError);
+            }
+            else {
+                var isEmpty;
+
+                if (!(isEmpty = $.isNullOrWhiteSpace(data))) {
+                    if (data.hasOwnProperty("ReturnData")) {
+                        isEmpty = $.isNullOrWhiteSpace(data.ReturnData) || data.ReturnData.length <= 0;
+                    }
+                    else
+                        isEmpty = data.length <= 0;
+                    //si no hay datos, y no se está navegando entre las páginas, entonces el set de resultados es vacío!
+                    if (isEmpty && (!$.isNullOrWhiteSpace(grdIndexChanging[gridViewId]) || !grdIndexChanging[gridViewId])) {
+                        isEmpty = true;
+                    }
+                }
+
+                if (isEmpty) {
+                    grdIndexChanging[gridViewId] = false;
+                    togglePanels("pnlNoRecords", "data-panelid-" + gridViewId);
+                    retVal = false;
+                }
+                else
+                    togglePanels("pnlResult", "data-panelid-" + gridViewId);
+            }
+            return retVal;
+        }
+        function onBeforeSearch_Event(pageIndex, pageSize, gridViewId) {
+            grdIndexChanging[gridViewId] = (pageIndex !== 0);
+            var grid = $("#" + gridViewId);
+            $(grid).attr("data-status", "searching");
+
+            var tabId = grid.parents(".contenido:first").attr("id");
+            if ($("#" + tabId + "Loading").length <= 0)
+                $("#" + tabId + "ButtonLabel").append("<img id='" + tabId + "Loading' src='../Images/fb_loading.gif' style='width:20px'>");
+            //showCourtain();
+        }
+        function onPageIndexChanging_Event(gridViewId, fromIndex, toIndex, isLastPage) {
+            grdIndexChanging[gridViewId] = true;
+        }
+        function toggleVerMas(seccion, $gridView) {
+            verMas[seccion] = !verMas[seccion];
+            var lnk = $("#lnk" + seccion + "VerMas");
+            if (verMas[seccion]) {
+                lnk.text(lnk.data("ver-menos-label"));
+                $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", $gridView).show(200);
+            }
+            else {
+                lnk.text(lnk.data("ver-mas-label"));
+                $("TR.gridRow[gridview_rowType='row']:nth-child(1n+6)", $gridView).hide(200);
+            }
+        }
+        function lnkOperacionesVerMas_ClientClick(src, evt) {
+            toggleVerMas("Operaciones", $("#grdOperaciones"));
+        }
+        function lnkRemisionesVerMas_ClientClick(src, evt) {
+            toggleVerMas("Remisiones", $("#grdRemisiones"));
+
+        }
+        function lnkPrestamosVerMas_ClientClick(src, evt) {
+            toggleVerMas("Prestamos", $("#grdPrestamos"));
+        }
+        function lnOficiosVerMas_ClientClick(src, evt) {
+            toggleVerMas("Oficios", $("#grdOficios"));
+        }
+
+        var downloadIntervalId = [];
+        function initDownloadCompleteValidation(downloadToken, onComplete) {
+            var initialTime = (new Date().getTime());
+            downloadIntervalId[downloadToken] = window.setInterval(function (downloadToken, initialTime, onComplete) {
+                var token;
+                //lee el token de la cookie.
+                var parts = document.cookie.split("downloadToken=");
+                if (parts.length == 2) token = parts.pop().split(";").shift();
+                else token = null;
+                //se esperará hasta 1' sino se dará como finalizado.
+                var timeout = (((new Date().getTime()) - initialTime) > 60000);
+                if ((token == downloadToken) || timeout) {
+                    if (typeof onComplete === "function")
+                        onComplete(downloadToken);
+                    window.clearInterval(downloadIntervalId[downloadToken]);
+                    downloadIntervalId[downloadToken] = null;
+                }
+
+            }, 1000, downloadToken, initialTime, onComplete); //el segundo parámetro es el tiempo de la primera llamada al método, se usará como timeout, para evitar un ciclo infinito.
+        }
+
+        function CloseDialog(dialogId) {
+            $.webDialog.close(dialogId);
+        }
+    </script>
+<link href="../App_Themes/Main/Main.css" type="text/css" rel="stylesheet" /></head>
+<body>
+    <form method="post" action="./Radiografia.aspx?idExpediente=d11991cb-bd5e-4b2c-806e-0365f05430be" id="form1" onsubmit="var cid = showCourtain();$(&#39;div[courtainId=&#39; + cid + &#39;]&#39;).focus();return true;">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTAyNzA1OTIwNQ9kFgJmD2QWAgIDD2QWAgIBD2QWAgIBDw8WAh4ISW1hZ2VVcmwFmwEvc2l0aW9jb250YWRvcmVzL3NpdGlvY29udGFkb3Jlcy5hc3B4P3R5cGU9Y291bnRlciZBcGxpY2FjaW9uPU1hcmNvUG9sbyZQYWdpbmE9UmFkaW9ncmFmaWEmU2VjY2lvbj0mVXN1YXJpbz0xLTIwODE2JlNlc3Npb25JZD0mUGVyc29uYWwxPTY3OTgzNDcmUGVyc29uYWwyPWRkZKUuMqQ/uY0BeSd4P/gOwVAqlFkp" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="9480B6D4" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAOZx9lWS89G029TCbBGxISwuZ3VjWvIxXQ+0FbV3cRC5nAc7jDMYZKez5tc/x0ag6jLx4kasWFYQB76S3YDOD6a6Ir9vQ==" />
+</div>
+        
+    <div class="container-fluid radiografiaBody">
+        <!--CABECERA-->
+        <div class="row">
+            <div class="col-12">
+                <h1>:: <span class="resaltado">RADIOGRAFÍA</span> DEL EXPEDIENTE</h1>
+            </div>
+            <div class="col-12">
+                <h2><span id="lblNumeroExpediente"></span></h2>
+            </div>
+        </div>
+        <div class="row info encabezadoExpediente">
+            <div class="col-12 col-md-6 col-lg-1 cellLabel">Tribunal Actual:</div>
+            <div class="col-12 col-md-6 col-lg-3 cellData">
+                <span id="lblTribunal"></span>
+            </div>
+            <div class="col-5 col-md-6 col-lg-1 cellLabel">Fecha de Inicio:</div>
+            <div class="col-7 col-md-6 col-lg-3 cellData">
+                <span id="lblFechaInicio"></span>
+            </div>
+            <div class="col-5 col-md-6 col-lg-1 cellLabel">Tipo de Juicio:</div>
+            <div class="col-7 col-md-6 col-lg-3 cellData">
+                <span id="lblTipoJuicio"></span>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-12 col-md-1 col-lg-1 col-xl-1 cellLabel">Co-Dependencias:</div>
+            <div class="col-12 col-md-11 col-lg-11 col-xl-11 cellData">
+                <span id="lblCodependencias"></span>
+            </div>
+            <div class="w-100"></div>
+            <div class="col-12 col-md-1 col-lg-1 col-xl-1 cellLabel">Carátula:</div>
+            <div class="col-12 col-md-11 col-lg-11 col-xl-11 cellData">
+                <span id="lblCaratula"></span>
+            </div>
+            <div class="col-3 col-md-6 col-lg-1 cellLabel">Estado:</div>
+            <div class="col-3 col-md-6 col-lg-3 cellData">
+                <span id="lblEstado"></span>
+            </div>
+            <div class="col-3 col-md-6 col-lg-1 cellLabel">Ubicación:</div>
+            <div class="col-3 col-md-6 col-lg-3 cellData">
+                <span id="lblUbicacion"></span>
+            </div>
+        </div>
+        <!-- FIN CABECERA-->
+        <section id="pnlRadiografia" style="display: none">
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="tabHeaderPartes">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabPartes" aria-expanded="true" aria-controls="collapseOne" type="button">
+                            <span id="tabPartesButtonLabel" class="titulo-acordion">partes</span>
+                        </button>
+                    </div>
+                    <div id="tabPartes" class="collapse contenido" aria-labelledby="tabHeaderPartes" data-parent="#accordion">
+                        <div class="card-body">
+                            <div id="accordionPartes" class="accordionChild">
+                                <div class="card">
+                                    <div class="card-header" id="tabHeaderPartesPrincipales">
+                                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabPartesPrincipales" aria-expanded="true"
+                                            aria-controls="collapseOne" type="button">
+                                            <span id="tabPartesPrincipalesButtonLabel" class="titulo-acordion">PRINCIPALES</span>
+                                        </button>
+                                    </div>
+                                    <div id="tabPartesPrincipales" class="collapse contenido" aria-labelledby="tabHeaderPartes" data-parent="#accordionPartes">
+                                        <div data-panelid-grdpartesprincipales="pnlNoRecords">
+                                            <div class="noRecords">No hay registros de partes principales.</div>
+                                        </div>
+                                        <div class="clearfix Altoclear"></div>
+                                        <div data-panelid-grdpartesprincipales="pnlResult" style="display: none">
+                                            <div id="grdPartesPrincipales" class="gridView" data-status="initial"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="tabHeaderPartesAuxiliares">
+                                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabPartesAuxiliares" aria-expanded="true"
+                                            aria-controls="collapseOne" type="button">
+                                            <span id="tabPartesAuxiliaresButtonLabel" class="titulo-acordion">AUXILIARES</span>
+                                        </button>
+                                    </div>
+                                    <div id="tabPartesAuxiliares" class="collapse contenido" aria-labelledby="tabHeaderPartes" data-parent="#accordionPartes">
+                                        <div data-panelid-grdpartesauxiliares="pnlNoRecords">
+                                            <div class="noRecords">No hay registros de partes auxiliares.</div>
+                                        </div>
+                                        <div class="clearfix Altoclear"></div>
+                                        <div data-panelid-grdpartesauxiliares="pnlResult" style="display: none">
+                                            <div id="grdPartesAuxiliares" class="gridView" data-status="initial"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderOperaciones">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabOperaciones" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabOperacionesButtonLabel" class="titulo-acordion selected">operaciones</span>
+                        </button>
+                    </div>
+                    <div id="tabOperaciones" class="collapse show contenido" aria-labelledby="tabHeaderOperaciones" data-parent="#accordion">
+                        <div class="card-body">
+                            <div>
+                                <div data-panelid-grdoperaciones="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de Operaciones.</div>
+                                </div>
+                                <div data-panelid-grdoperaciones="pnlResult" style="display: none">
+                                    <div id="grdOperaciones" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                            <div class="divFooterRow">
+                                <a href="javascript:void(0);" id="lnkOperacionesVerMas" class="lnkVerMas" data-ver-menos-label="- VER MENOS OPERACIONES" data-ver-mas-label="+ VER TODAS LAS OPERACIONES" onclick="lnkOperacionesVerMas_ClientClick(this, event);" style="display: none">+ VER TODAS LAS OPERACIONES</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderPrestamos">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabPrestamos" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabPrestamosButtonLabel" class="titulo-acordion">préstamos</span>
+                        </button>
+                    </div>
+                    <div id="tabPrestamos" class="collapse contenido" aria-labelledby="tabHeaderPrestamos" data-parent="#accordion">
+                        <div class="card-body">
+                            <!--PAGE 3-->
+                            <div>
+                                <div data-panelid-grdprestamos="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de Préstamos.</div>
+                                </div>
+                                <div class="clearfix Altoclear"></div>
+                                <div data-panelid-grdprestamos="pnlResult" style="display: none">
+                                    <div id="grdPrestamos" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                            <div class="divFooterRow">
+                                <a href="javascript:void(0);" id="lnkPrestamosVerMas" class="lnkVerMas" data-ver-menos-label="- VER MENOS PRÉSTAMOS" data-ver-mas-label="+ VER TODOS LOS PRÉSTAMOS" onclick="lnkPrestamosVerMas_ClientClick(this, event);" style="display: none">+ VER TODOS LOS PRÉSTAMOS</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderRemisiones">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabRemisiones" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabRemisionesButtonLabel" class="titulo-acordion">remisiones</span>
+                        </button>
+                    </div>
+                    <div id="tabRemisiones" class="collapse contenido" aria-labelledby="tabHeaderRemisiones" data-parent="#accordion">
+                        <div class="card-body">
+                            <div>
+                                <div data-panelid-grdremisiones="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de Remisiones.</div>
+                                </div>
+                                <div class="clearfix Altoclear"></div>
+                                <div data-panelid-grdremisiones="pnlResult" style="display: none">
+                                    <div id="grdRemisiones" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                            <div class="divFooterRow">
+                                <a href="javascript:void(0);" id="lnkRemisionesVerMas" class="lnkVerMas" data-ver-menos-label="- VER MENOS REMISIONES" data-ver-mas-label="+ VER TODAS LAS REMISIONES" onclick="lnkRemisionesVerMas_ClientClick(this, event);" style="display: none">+ VER TODAS LAS REMISIONES</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderCuentas">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabCuentas" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabCuentasButtonLabel" class="titulo-acordion">cuentas</span>
+                        </button>
+                    </div>
+                    <div id="tabCuentas" class="collapse contenido" aria-labelledby="tabHeaderCuentas" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdcuentasjudiciales="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Cuentas Judiciales asociadas...</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdcuentasjudiciales="pnlResult" style="display: none">
+                                <div id="grdCuentasJudiciales" class="gridView" data-status="initial"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderExpedRelac">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabExpedRelac" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabExpedRelacButtonLabel" class="titulo-acordion">expedientes relacionados</span>
+                        </button>
+                    </div>
+                    <div id="tabExpedRelac" class="collapse contenido" aria-labelledby="tabHeaderExpedRelac" data-parent="#accordion">
+                        <div class="card-body">
+                            <div>
+                                <div data-panelid-grdrelacionesentreexpedientes="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de relaciones entre expedientes.</div>
+                                </div>
+                                <div class="clearfix Altoclear"></div>
+                                <div data-panelid-grdrelacionesentreexpedientes="pnlResult" style="display: none">
+                                    <div id="grdRelacionesEntreExpedientes" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderOficios">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabOficios" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabOficiosButtonLabel" class="titulo-acordion">oficios</span>
+                        </button>
+                    </div>
+                    <div id="tabOficios" class="collapse contenido" aria-labelledby="tabHeaderOficios" data-parent="#accordion">
+                        <div class="card-body">
+                            <div>
+                                <div data-panelid-grdoficios="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de Oficios.</div>
+                                </div>
+                                <div class="clearfix Altoclear"></div>
+                                <div data-panelid-grdoficios="pnlResult" style="display: none">
+                                    <div id="grdOficios" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                            <div class="divFooterRow">
+                                <a href="javascript:void(0);" id="lnkOficiosVerMas" class="lnkVerMas" data-ver-menos-label="- VER MENOS OFICIOS" data-ver-mas-label="+ VER TODOS LOS OFICIOS" onclick="lnOficiosVerMas_ClientClick(this, event);" style="display: none">+ VER TODOS LOS OFICIOS</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderFianzas">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabFianzas" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabFianzasButtonLabel" class="titulo-acordion">fianzas</span>
+                        </button>
+                    </div>
+                    <div id="tabFianzas" class="collapse contenido" aria-labelledby="tabHeaderFianzas" data-parent="#accordion">
+                        <div class="card-body">
+                            <div>
+                                <div data-panelid-grdfianzas="pnlNoRecords">
+                                    <div class="noRecords">No hay registros de Fianzas.</div>
+                                </div>
+                                <div class="clearfix Altoclear"></div>
+                                <div data-panelid-grdfianzas="pnlResult" style="display: none">
+                                    <div id="grdFianzas" class="gridView" data-status="initial"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderComunicaciones">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabComunicaciones" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabComunicacionesButtonLabel" class="titulo-acordion">Comunicaciones</span>
+                        </button>
+                    </div>
+                    <div id="tabComunicaciones" class="collapse contenido" aria-labelledby="tabHeaderComunicaciones" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdcomunicaciones="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Comunicaciones.</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdcomunicaciones="pnlResult" style="display: none">
+                                <div id="grdComunicaciones" class="gridView" data-status="initial"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderComprobantesTasa">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabComprobantesTasa" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabComprobantesTasaButtonLabel" class="titulo-acordion">Comprobantes Tasa</span>
+                        </button>
+                    </div>
+                    <div id="tabComprobantesTasa" class="collapse contenido" aria-labelledby="tabHeaderComprobantesTasa" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdcomprobantestasa="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Comprobantes de Tasa.</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdcomprobantestasa="pnlResult" style="display: none">
+                                <div id="grdComprobantesTasa" class="gridView" data-status="initial"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderRelacionesPartes">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabRelacionesPartes" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabRelacionesPartesButtonLabel" class="titulo-acordion">Relaciones Entre Partes</span>
+                        </button>
+                    </div>
+                    <div id="tabRelacionesPartes" class="collapse contenido" aria-labelledby="tabHeaderRelacionesPartes" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdrelacionespartes="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Relaciones entre partes.</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdrelacionespartes="pnlResult" style="display: none">
+                                <div id="grdRelacionesPartes" class="gridView" data-status="initial"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderHechos">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabHechos" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabHechosButtonLabel" class="titulo-acordion">Hechos</span>
+                        </button>
+                    </div>
+                    <div id="tabHechos" class="collapse contenido" aria-labelledby="tabHeaderHechos" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdhechos="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Hechos.</div>
+                            </div>
+                            <div data-panelid-grdhechos="pnlResult" style="display: none">
+                                <div id="grdHechos" class="gridView" data-status="initial"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderHechosPersonas">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabHechosPersonas" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabHechosPersonasButtonLabel" class="titulo-acordion">Hechos - Personas</span>
+                        </button>
+                    </div>
+                    <div id="tabHechosPersonas" class="collapse contenido" aria-labelledby="tabHeaderHechosPersonas" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdhechospersonas="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Hechos - Personas.</div>
+                            </div>
+                            <div data-panelid-grdhechospersonas="pnlResult" style="display: none">
+                                <div id="grdHechosPersonas" class="gridView" data-status="initial"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderObjetosJuicio">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabObjetosJuicio" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabObjetosJuicioButtonLabel" class="titulo-acordion">Objetos de Juicio</span>
+                        </button>
+                    </div>
+                    <div id="tabObjetosJuicio" class="collapse contenido" aria-labelledby="tabHeaderObjetosJuicio" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdobjetosjuicio="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Objetos Juicio.</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdobjetosjuicio="pnlResult" style="display: none">
+                                <div id="grdObjetosJuicio" class="gridView" data-status="initial"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="tabHeaderSecuestros">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabSecuestros" aria-expanded="false"
+                            aria-controls="collapseOne" type="button">
+                            <span id="tabSecuestrosButtonLabel" class="titulo-acordion">Secuestros</span>
+                        </button>
+                    </div>
+                    <div id="tabSecuestros" class="collapse contenido" aria-labelledby="tabHeaderSecuestros" data-parent="#accordion">
+                        <div class="card-body">
+                            <div data-panelid-grdsecuestros="pnlNoRecords">
+                                <div class="noRecords">No hay registros de Secuestros.</div>
+                            </div>
+                            <div class="clearfix Altoclear"></div>
+                            <div data-panelid-grdsecuestros="pnlResult" style="display: none">
+                                <div id="grdSecuestros" class="gridView" data-status="initial"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="messageContainer" class="info" style="text-align: center; display: none">
+            <span id="lblError"></span>
+        </div>
+        <!--FIN CONTENIDO-->
+        <div class="row">
+            <div class="col-12 no-print text-center">
+                <div onclick="window.print()" class="btn mt-1 btn-sm btn-danger">
+                    <span class="glyphicon glyphicon-print"></span>&nbsp;IMPRIMIR
+                </div>
+                &nbsp;|&nbsp;
+                <div onclick="btnCerrar_ClientClick(this,event)" class="btn mt-1 btn-sm btn-info">CERRAR</div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none">
+        <img id="imgSitioContadores" alt="" src="/sitiocontadores/sitiocontadores.aspx?type=counter&amp;Aplicacion=MarcoPolo&amp;Pagina=Radiografia&amp;Seccion=&amp;Usuario=1-20816&amp;SessionId=&amp;Personal1=6798347&amp;Personal2=" />
+    </div>
+    <input type="hidden" name="ctl00$cphDetalle$hdnCodigoExpediente" id="hdnCodigoExpediente" value="d11991cb-bd5e-4b2c-806e-0365f05430be" />
+    <div style="display: none">
+        <div id="masDatosTemplate" class="masDatosContainer">
+            <div id="accordionMasDatos">
+                <div class="card">
+                    <div class="card-header" id="tabHeaderMasDatos">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#tabMasDatos" aria-expanded="true" aria-controls="collapseOne" type="button">
+                            <span id="tabMasDatosButtonLabel" class="titulo-acordion masDatosTitle divMasDatosTitle"></span>
+                        </button>
+                    </div>
+                    <div id="tabMasDatos" class="collapse show contenido" aria-labelledby="tabHeaderMasDatos" data-parent="#accordionMasDatos">
+                        <div class="card-body masDatosBody">
+                            <div class="row masDatoRowTitle">
+                                <div class="col masDatoRowTitleCell masDatosCell divPreviousHeader"></div>
+                                <div class="col masDatoRowTitleCell masDatosCell divCurrentHeader"></div>
+                            </div>
+                            <div class="row masDatoRowData">
+                                <div class="col masDatoRow masDatosCell divPreviousData"></div>
+                                <div class="col masDatoRow masDatosCell divCurrentData"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    <input type="hidden" name="ctl00$RefreshHandlerModule_PostbackGuid" id="RefreshHandlerModule_PostbackGuid" value="35b50c58-c6b9-4a49-892a-ffce18d7e371" /></form>
+</body>
+</html>

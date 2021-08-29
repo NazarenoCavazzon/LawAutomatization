@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta http-equiv="X-UA-Compatible" content="IE=EDGE" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>
+	:: G E S T I O N     D I G I T A L     P A R A     A B O G A D O S  ::
+</title>
+    <script type="text/javascript" src="../Scripts/jquery.min.js?v3.4.1"></script>
+    <script type="text/javascript" src="../Scripts/jquery-ui.min.js?v1.12.1"></script>
+    <script type="text/javascript" src="../Scripts/Funciones.js?v1.12.0.1"></script>
+    <script type="text/javascript" src="../Scripts/modernizr.custom.min.js?v=3.3.1"></script>
+    <script type="text/javascript" src="../Scripts/DataTypeValidators.min.js?v=3.2.0.0"></script>
+    <script type="text/javascript" src="../Scripts/jquery.json.min.js?v=2.3"></script>
+    <script type="text/javascript" src="../Scripts/dialog/webDialog.min.js?v=6.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/GridView/gridview.min.js?v=8.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/showCourtain.min.js?v2.0.0.0"></script>
+    <script type="text/javascript" src="../Scripts/cache.client.min.js?v=1.0.0.0"></script>
+    <script type="text/javascript" src="../Scripts/DatePicker/bootstrap-datepicker.min.js?v=1.9.0"></script>
+    <script type="text/javascript" src="../Scripts/DatePicker/bootstrap-datepicker.es.min.js?v=1.9.0.0"></script>
+    <script type="text/javascript" src="../Scripts/wsAjax/wsAjax.min.js?v=3.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/MyToolTip.min.js?v=1.1.0.0"></script>
+    <script type="text/javascript" src="../Scripts/popper.min.js?v4.3.1"></script>
+    <script type="text/javascript" src="../Scripts/bootstrap.min.js?v4.3.1"></script>
+
+    <link rel="stylesheet" type="text/css" href="../CSS/jqueryUI.custom/jquery-ui.min.css?v1.12.1" /><link rel="stylesheet" type="text/css" href="../CSS/icons.min.css" /><link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css?v4.3.1" /><link rel="stylesheet" type="text/css" href="../css/bootstrap-theme.min.css?v=3.3.6" /><link rel="stylesheet" type="text/css" href="../CSS/bootstrap.custom.min.css?v1.1" /><link rel="stylesheet" type="text/css" href="../CSS/DatePicker/bootstrap-datepicker.min.css?v=1.9.0" /><link rel="stylesheet" type="text/css" href="../CSS/gridView.min.css?v=1.1.1.0" /><link rel="stylesheet" type="text/css" href="../CSS/MarcoPolo.min.css?v=1.0.0.0" /><link rel="stylesheet" type="text/css" href="../CSS/General.min.css?v11.8.0.0" /><link rel="stylesheet" type="text/css" href="../CSS/IE10Support.min.css?11.8.0.0" />
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 10]>
+           <script>
+            alert("Uds. está corriendo una versión de Internet Explorer menor a la soportada por el sistema. Si continúa puede que algunas funcionalidades no esten disponibles, o algunas pantallas no se muestren correctamente.");
+           </script>
+    <![endif]-->
+    <script type="text/javascript">
+        var webDialogId = null;
+        function GridView_GetConfiguration() {
+            return { ajaxLoaderImage: "../Images/ajax-loader.gif" };
+        }
+        function closeDialog() {
+            $("[webDialogId=" + webDialogId + "]").webDialog("close");
+            webDialogId = null;
+        }
+
+        $(function () {
+            window.cacheProvider = new JSFramework.Commons.CacheManager.Cache();
+            window.originalAlert = window.alert;
+            window.alert = function (msg, closeOnMessage) {
+                var dialogId = "alertDialog";
+                if ($(".modalDialog[webDialogId=" + dialogId + "]").length <= 0)
+                    return window.jQuery.webDialog.show(msg, { dialogId: dialogId, showCloseButton: closeOnMessage });
+
+                return null;
+            };
+            try {
+                var elements = document.getElementsByTagName("INPUT");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("invalid", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                var message = this.getAttribute("requiredMessage");
+                                if (typeof message === "undefined" || message === null || message === "")
+                                    message = "Este campo es requerido";
+                                e.target.setCustomValidity(message);
+                            }
+                        }
+                        catch (m) { }
+                    });
+                    elements[i].addEventListener("input", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                        }
+                        catch (m) { }
+                        return true;
+                    });
+                }
+
+                var elements = document.getElementsByTagName("SELECT");
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("invalid", function (e) {
+                        try {
+
+                            e.target.setCustomValidity("");
+                            if (!e.target.validity.valid) {
+                                var message = this.getAttribute("requiredMessage");
+                                if (typeof message === "undefined" || message === null || message === "")
+                                    message = "Este campo es requerido";
+                                e.target.setCustomValidity(message);
+                            }
+                        } catch (m) { }
+                    });
+                    elements[i].addEventListener("change", function (e) {
+                        try {
+                            e.target.setCustomValidity("");
+                        } catch (m) { }
+                        return true;
+                    });
+                }
+            }
+            catch (m) { }
+        });
+    </script>
+    
+    <link rel="stylesheet" type="text/css" href="../css/css.min.css?v=1.0.0.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.min.css?v=1.0.0.0" />
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-91794904-2', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            goToTop();
+            //goToBottom();
+        });
+
+        function mobileRedirection() {
+            if (/midp|mobile|phone|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $("#dvVersionMobile").show();
+            }
+        }
+
+        function menuItemClick(url) {
+            try {
+                showCourtain();
+                window.location.href = url;
+            }
+            catch (error) {
+                hideCourtain();
+            }
+
+        }
+
+        function VerCredencial() {
+            var sURL = '../Menu/credencial.aspx';
+            OpenPage(sURL, 610, 330, null, '');
+        }
+
+        function responsiveMenuButton_ClientClick() {
+            $(".menuContainer").toggleClass("active");
+        }
+
+        var goToTop = function () {
+            $('.js-gotop').on('click', function (event) {
+
+                event.preventDefault();
+
+                $('html, body').animate({
+                    scrollTop: $('html').offset().top
+                }, 500, 'easeInOutExpo');
+
+                return false;
+            });
+
+            $(window).scroll(function () {
+
+                var $win = $(window);
+                if ($win.scrollTop() > 200) {
+                    $('.js-top').addClass('active');
+                } else {
+                    $('.js-top').removeClass('active');
+                }
+
+            });
+
+        };
+        //var goToBottom = function () {
+
+        //    $('.js-gobottom').on('click', function (event) {
+
+        //        event.preventDefault();
+
+        //        $('html, body').animate({
+        //            scrollTop: document.body.scrollHeight
+        //        }, 500, 'easeInOutExpo');
+
+        //        return false;
+        //    });
+
+        //    $(window).scroll(function () {
+
+        //        var $win = $(window);
+        //        if ($win.scrollTop() >= $('html').offset().top) {
+        //            $('.js-bottom').addClass('active');
+        //        } else {
+        //            $('.js-bottom').removeClass('active');
+        //        }
+
+        //    });
+        //};
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            configGridResult();
+            $(document).keyup(function (evt) {
+                if (evt.keyCode === 13)
+                    buscarExpedientes();
+            });
+            loadComboLocalidades();
+            loadComboDependencias();
+        });
+
+        function ddlLocalidad_ClientOnChange(src, evt) {
+            var $ddlLocalidades = $(src);
+            var $ddlDependencia = $("#ddlDependencia");
+
+            loadComboDependencias($ddlLocalidades.val());
+        }
+
+        function loadComboLocalidades() {
+            loadCombo($("#ddlLocalidad"), "ExpedientesAlta.aspx", "ObtenerLocalidades", {}, /*onFillCompleteCallBack*/function () { });
+        }
+
+        function loadComboDependencias(localidad) {
+            if (typeof localidad === "undefined" || localidad === "")
+                localidad = null;
+            loadCombo($("#ddlDependencia"), "ExpedientesAlta.aspx", "ObtenerDependencias", { CodLocalidad: localidad }, /*onFillCompleteCallBack*/function () {
+                $("#ddlDependencia").val("");
+            });
+        }
+
+        function lnkVerLibroExpediente_Click() {
+            var itemData = $(this).parents("tr[gridview_rowtype=row]:first").data("itemData");
+            if (!$.isNullOrWhiteSpace(itemData)) {
+                var size = getDialogSize(.9);
+                $.webDialog.show({
+                    content: '../_Expedientes/ExpedienteLibro.aspx?idExpediente=' + itemData.idExpediente,
+                    width: size.width,
+                    height: size.height,
+                    type: "url"
+                });
+            }
+            else
+                alert("No se pudo obtener el libro del expediente.");
+        }
+
+        function Limpiar() {
+            $("#grdExpedientes").gridView().cleanSearch();
+            $("#txtNumeroExpediente").val("");
+            $("#txtFechaDesde").val("");
+            $("#txtFechaHasta").val("");
+            loadComboDependencias(null);
+            $("#ddlLocalidad").prop("disabled", false).val("");
+            $("#ddlDependencia").val("");
+            togglePanels("pnlFiltros");
+        }
+
+        var grdExpedientesIndexChanging = false;
+        var grdExpedientesCourtainId;
+        function configGridResult() {
+            $("#grdExpedientes").gridView({
+                dataSourceType: "ws",
+                dataSource: 'ExpedientesAlta.aspx/Search',
+                allowSelection: false,
+                selectionMode: 'row',
+                useJQueryUI: false,
+                rowDataFieldId: "idExpediente",
+                paggingNavigationMode: 'backforward',
+                showRefresh: false,
+                usePagging: true,
+                pageSize: 10,
+                dataResultProperty: "ReturnData",
+                noResultsCaption: ">> Se ha alcanzado la última página <<",
+                getFilterData: function () {
+                    var filterData = { idExpediente: null, CodLocalidad: null, idDependencia: null, Caratula: null, FechaDesde: null, FechaHasta: null };
+                    var $txtNumeroExpediente = $("#txtNumeroExpediente");
+                    var $ddlLocalidad = $("#ddlLocalidad");
+                    var $ddlDependencia = $("#ddlDependencia");
+                    var $txtCaratula = $("#txtCaratula");
+                    var $txtFechaDesde = $("#txtFechaDesde");
+                    var $txtFechaHasta = $("#txtFechaHasta");
+
+                    if ($txtNumeroExpediente.val() !== "")
+                        filterData.idExpediente = parseFloat($txtNumeroExpediente.val());
+                    if ($ddlLocalidad.val() !== "")
+                        filterData.CodLocalidad = $ddlLocalidad.val();
+                    if ($ddlDependencia.val() !== "")
+                        filterData.idDependencia = $ddlDependencia.val();
+                    if ($txtCaratula.val() !== "")
+                        filterData.Caratula = $txtCaratula.val();
+                    if ($txtFechaDesde.val() !== "")
+                        filterData.FechaDesde = $txtFechaDesde.val().replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1");
+                    if ($txtFechaHasta.val() !== "")
+                        filterData.FechaHasta = $txtFechaHasta.val().replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1");
+
+                    return filterData;
+                },
+                onPageIndexChanging: function (gridViewId, fromIndex, toIndex, isLastPage) {
+                    grdExpedientesIndexChanging = true;
+                },
+                onRowDataBound: function (row, gridViewId, data, rowIndex) { },
+                onGridDrawed: function (gridViewId) {
+                    var $gridView = $("[gridViewId=" + gridViewId + "]");
+                    $("tr[gridview_rowtype=row]", $gridView).each(function (index, row) {
+                        var itemData = $(row).data("itemData");
+                        if (!itemData.ShowDetalle) {
+                            $(".btnVer", row).attr("src", "../Images/ver-detalleN.png");
+                            $(".btnVer", row).attr("title", "Ver encabezado");
+                        } else {
+                            $(".btnVer", row).attr("title", "Ver Radiografia");
+                        }
+                    });
+                    $(".lnkVerLibroExpediente", $gridView).on("click", lnkVerLibroExpediente_Click).attr("title", "Ver 'Libro' del expediente");
+
+                    hideCourtain(grdExpedientesCourtainId);
+                },
+                onBeforeDraw: function (gridViewId, data) {
+                    var retVal = true;
+                    if (typeof data !== "undefined" && data.hasOwnProperty("IsSuccess") && !data.IsSuccess) {
+                        retVal = false;
+                        hideCourtain(grdExpedientesCourtainId);
+                        alert(data.MessageError);
+                    }
+                    else {
+                        if (typeof data.ReturnData !== "undefined" && data.ReturnData !== null && data.ReturnData.length <= 0) {
+                            if (!grdExpedientesIndexChanging) {
+                                grdExpedientesIndexChanging = false;
+                                togglePanels("pnlNoRecords", "panelResultsId");
+                                hideCourtain(grdExpedientesCourtainId);
+                                retVal = false;
+                            }
+                        }
+                        else {
+                            togglePanels("pnlGridresult", "panelResultsId");
+                        }
+                        togglePanels("pnlResultado");
+                    }
+
+                    return retVal;
+                },
+                onBeforeSearch: function (pageIndex, pageSize, gridViewId) {
+                    grdExpedientesIndexChanging = (pageIndex !== 0);
+                    var isValid = true;
+                    var hasAnyFilter = false;
+
+                    var $txtNumeroExpediente = $("#txtNumeroExpediente");
+                    var $txtCaratula = $("#txtCaratula");
+                    var $ddlLocalidad = $("#ddlLocalidad");
+                    var $ddlDependencia = $("#ddlDependencia");
+                    var $txtFechaDesde = $("#txtFechaDesde");
+                    var $txtFechaHasta = $("#txtFechaHasta");
+
+                    if ($txtNumeroExpediente.val() !== "") {
+                        hasAnyFilter = true;
+                        if (!(isValid = $txtNumeroExpediente.DataTypeValidator().isValid()))
+                            alert("El número de expediente es inválido.");
+                    }
+                    if ($txtCaratula.val() !== "") {
+                        hasAnyFilter = true;
+                        if (!(isValid = ($txtCaratula.val().length >= 4)))
+                            alert("Debe ingresar al menos 4 caracteres del texto de la carátula.");
+                    }
+                    if ($txtFechaDesde.val() !== "") {
+                        hasAnyFilter = true;
+                        if (!(isValid = $txtFechaDesde.DataTypeValidator().isValid()))
+                            alert("La fecha de Presentación es inválida.");
+                    }
+                    if ($txtFechaHasta.val() !== "") {
+                        hasAnyFilter = true;
+                        if (!(isValid = $txtFechaHasta.DataTypeValidator().isValid()))
+                            alert("La fecha de Presentación es inválida.");
+                    }
+                    if ($ddlLocalidad.val() !== "")
+                        hasAnyFilter = true;
+                    if ($ddlDependencia.val() !== "")
+                        hasAnyFilter = true;
+
+                    if (!hasAnyFilter)
+                        alert("Debe ingresar al menos un criterio de búsqueda");
+
+                    var retVal = isValid && hasAnyFilter;
+                    if (retVal)
+                        grdExpedientesCourtainId = showCourtain();
+
+                    return retVal;
+                },
+                onError: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                },
+                onComplete: function (gridViewId, isSuccess, status, messageError) {
+                    hideCourtain(grdExpedientesCourtainId);
+                },
+                columns: [{
+                    visible: false,
+                    description: "idExpediente",
+                    dataFieldName: "idExpediente",
+                    includeInResult: true
+                },
+                {
+                    visible: true,
+                    description: "Expediente",
+                    dataFieldName: "NumeroExpediente",
+                    includeInResult: false,
+                    cssClass: 'lnkVerLibroExpediente linkButtonNormal'
+                },
+                {
+                    visible: true,
+                    description: "Carátula",
+                    dataFieldName: "CaratulaExpediente",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Dependencia",
+                    dataFieldName: "DescriDependenci",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Estado",
+                    dataFieldName: "estadoexpediente",
+                    includeInResult: false
+                }, {
+                    visible: true,
+                    description: "Ubicación",
+                    dataFieldName: "Ubica_Expediente",
+                    includeInResult: false
+                }, {
+                    visible: false,
+                    description: "TipoUbicacion",
+                    dataFieldName: "TipoUbicacion",
+                    includeInResult: true
+                }, {
+                    visible: true,
+                    description: "Detalle",
+                    type: 'control',
+                    includeInResult: false,
+                    Controls: [{
+                        label: "../Images/ver-detalle.png",
+                        onClick: function (row, id, rowType, data, src) {
+                            var size = getDialogSize(.9);
+                            if (typeof data !== "undefined" && data !== null) {
+                                $.webDialog.show({
+                                    content: '../_Expedientes/Radiografia.aspx?idExpediente=' + data.idExpediente,
+                                    width: size.width,
+                                    height: size.height,
+                                    type: "url"
+                                });
+                            }
+                        },
+                        type: 'image',
+                        template: '', //--> selector que indica el control modelo que se copiará para cada fila.
+                        cssClass: 'ImageButton btnVer',
+                        showInHeader: false,
+                        alt: 'Detalle'
+                    }]
+                },
+                {
+                    visible: false,
+                    description: "showDetalle",
+                    dataFieldName: "ShowDetalle",
+                    includeInResult: true
+                }]
+            }, false);
+        }
+
+        function btnCancelar_ClientClick(src, evt) {
+            Limpiar();
+        }
+
+        function btnNuevaBusqueda_ClientClick(src, evt) {
+            Limpiar();
+        }
+
+        function btnBuscar_ClientClick(src, evt) {
+            buscarExpedientes();
+        }
+
+        function buscarExpedientes() {
+            $("#grdExpedientes").gridView("doSearch");
+        }
+
+        function CloseDialog(dialogId) {
+            $.webDialog.close(dialogId);
+        }
+    </script>
+
+<link href="../App_Themes/Main/Main.css" type="text/css" rel="stylesheet" /></head>
+<body>
+    <form method="post" action="./ExpedientesAlta.aspx" id="form1" onsubmit="var cid = showCourtain();$(&#39;div[courtainId=&#39; + cid + &#39;]&#39;).focus();return true;">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUJNjkwNjU5Mzk1D2QWAmYPZBYCZg9kFgICAw9kFgICAQ9kFgoCAQ9kFgICAQ8WAh4EaHJlZgUSW3VybFZlcnNpb25Nb2JpbGVdZAIDDxYCHgRUZXh0BRFPTElWQSwgTklMREEgUk9TQWQCBQ8WAh8BBRAyOS8wOC8yMDIxIDA3OjA4ZAIJDxYCHgdWaXNpYmxlZxYCAgEPFgIfAmdkAgsPFgIfAmhkZAKcPRnAw1fAJvG3O76wrl+ronna" />
+</div>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="E968BDBB" />
+</div>
+        
+    <div class="container-fluid">
+        <div class="row" id="cabecera" style="clear: both;">
+            <div class="responsiveMenuButton" onclick="responsiveMenuButton_ClientClick(this, event);">
+                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </div>
+            <div class="col">
+                <a href="#" onclick="menuItemClick('../Menu/index.aspx');">
+                    <img src="../Images/design/logo.png" alt="logo" />
+                </a>
+                
+            </div>
+            <div class="col-12 col-sm-auto col-md-auto col-lg-auto">
+                <img src="../Images/design/login.jpg" width="34" height="26" alt="login" class="loginImage float-right m-1" />
+                <div class="float-left float-sm-right float-md-right float-lg-right text-left text-sm-right text-md-right text-lg-right">
+                    <p class="bienvenido azul">
+                        Bienvenido
+                    OLIVA, NILDA ROSA
+                    </p>
+                    <p class="gris">
+                        último ingreso:29/08/2021 07:08
+                    </p>
+                    <p class="gris">
+                        <a id="lnkCerrarSesion" CausesValidation="false" href="../Menu/SessionAbandon.aspx"> (x)  salir del sistema</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col lineagris"></div>
+        </div>
+        <div role="main" id="Principal" class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col col-md-3 col-lg-3 menuContainer">
+                        <div class="jumbotronAzul">
+                            <div>
+                                <section class="ac-container">
+                                    <div>
+                                        <input id="ac-1" name="accordion-1" type="checkbox" />
+                                        <label for="ac-1">
+                                            <img src="../Images/design/iconos/01.png" width="33" height="21" alt="inicio">
+                                            Inicio</label>
+                                        <article class="ac-xsmall">
+                                            <p><a href="#" onclick="menuItemClick('../Menu/index.aspx');">Comunicados</a></p>
+                                        </article>
+                                    </div>
+                                    <div>
+                                        <input id="ac-3" name="accordion-1" type="checkbox" />
+                                        <label for="ac-3">
+                                            <img src="../Images/design/iconos/09.png" width="33" height="24">
+                                            Mi Barandilla Virtual</label>
+                                        <article class="ac-items-6">
+                                            <p><a href="#" onclick="menuItemClick('../_Expedientes/ExpedientesNovedades.aspx');">Mis Novedades</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Expedientes/ExpedientesAlta.aspx');">Mis Expedientes</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_eCedulas/CedulasAlta.aspx');">Mis eCédulas Recibidas</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Prestamos/PrestamosAlta.aspx');">Mis Préstamos</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Fianzas/FianzasAlta.aspx');">Mis Fianzas</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Expedientes/ExpedientesSacLaboralBuscar.aspx');">Expedientes SAC LABORAL</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Expedientes/ExpedientesSacCivilBuscar.aspx');">Expedientes SAC Civil</a></p>
+                                        </article>
+                                    </div>
+                                    <div>
+                                        <input id="ac-2" name="accordion-1" type="checkbox" />
+                                        <label for="ac-2">
+                                            <img src="../Images/design/iconos/04.png" width="33" height="23">
+                                            Cuentas Judiciales</label>
+                                        <article class="ac-large">
+                                            <p><a href="#" onclick="menuItemClick('../_CuentasJudiciales/CuentasJudicialesAlta.aspx');">Consultar Saldo y CBU</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_eOrdenesPagos/OrdenPagoSolicitar.aspx');">Solicitar Nueva Orden de Pago</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_eOrdenesPagos/SolicitudesOrdenPagoBuscar.aspx');">Consultar Mis Solicitudes Generadas</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_eOrdenesPagos/OrdenPagoBuscar.aspx');">Consultar Ordenes de Pago</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_AgendaBeneficiarios/AgendaBeneficiarios.aspx');">Administrar Agenda de Beneficiarios</a></p>
+                                        </article>
+                                    </div>
+                                    <div id="divEscritos">
+                                        <input id="ac-11" name="accordion-1" type="checkbox" />
+                                        <label for="ac-11">
+                                            <img src="../Images/design/iconos/11.png" width="33" height="24">
+                                            Escritos Electrónicos</label>
+                                        <article class="ac-large">
+                                            <p><a href="#" onclick="menuItemClick('../_Escritos/EscritosSeleccion.aspx');">Agregar Nuevo Escrito</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Escritos/EscritosPresentarPendientes.aspx');">Presentar Escritos Pendientes</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Escritos/EscritosBuscar.aspx');">Consultar Mis Escritos Electrónicos</a></p>
+                                            <p id="escritosPapel"><a href="#" onclick="menuItemClick('../_Escritos/EscritosSeleccionPapel.aspx');">Enviar Nuevo Escrito - Exp. Papel</a></p>
+                                            <p><a href="#" onclick="menuItemClick('../_Escritos/EscritosPapelBuscar.aspx');">Consultar Mis Escritos Papel Enviados</a></p>  
+                                        </article>
+                                    </div>
+                                    <div>
+                                        <input id="ac-10" name="accordion-1" type="checkbox" />
+                                        <label for="ac-10">
+                                            <img src="../Images/design/iconos/2.png" width="31" height="28">
+                                            Impresiones</label>
+                                        <article class="ac-small">
+                                            <p><a href="javascript:VerCredencial()">Imprimir Credencial</a></p>
+                                        </article>
+                                    </div>
+                                    <div>
+                                        <input id="ac-14" name="accordion-1" type="checkbox" />
+                                        <label for="ac-14">
+                                            <img src="../Images/design/iconos/14a.png">
+                                            Suscripciones</label>
+                                        <article class="ac-small">
+                                            <p><a href="../_Suscripciones/adhesion_email.aspx">Alerta e-mail de Cortesía</a></p>
+                                        </article>
+                                    </div>
+                                    
+                                    <div>
+                                        <input id="ac-12" name="accordion-1" type="checkbox" />
+                                        <label for="ac-12">
+                                            <img src="../Images/design/iconos/1.png" width="31" height="28">
+                                            Ayuda</label>
+                                        <article class="ac-xsmall">
+                                            <p><a href="https://www.justiciacordoba.gob.ar/PortalEE/Pages/SeleccionarRol.aspx" target="_blank">Ruta de Aprendizaje</a></p>
+                                        </article>
+                                    </div>
+                                    <div>
+                                        <input id="ac-13" name="accordion-1" type="checkbox" />
+                                        <label for="ac-13">
+                                            <img src="../Images/design/iconos/10.png">
+                                            Seguridad</label>
+                                        <article class="ac-xsmall">
+                                            <p>
+                                                <a id="lnkCerrarSesion2" CausesValidation="false" href="../Menu/SessionAbandon.aspx">Salir del Sistema</a>
+                                            </p>
+                                        </article>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col col-md-9 col-lg-9 bodyContainer">
+                        
+    <h1>
+        <img src="../Images/design/iconos/09a.png" style="position: relative; top: -5px">Mis Expedientes
+    </h1>
+    <div panelid="pnlFiltros">
+        <div class="form-group row">
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2" for="txtNumeroExpediente">Nº Expediente</label>
+            <div class="col-12 col-md-3">
+                <input id="txtNumeroExpediente" class="form-control" type="number" datatype="numeric" autofocus />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2" for="ddlLocalidad">Localidad</label>
+            <div class="col-12 col-md-9">
+                <select id="ddlLocalidad" class="form-control"
+                    onchange="ddlLocalidad_ClientOnChange(this, event);"
+                    data-id-field="Id" data-text-field="Descripcion" data-select-text=">> Seleccionar <<">
+                    <option selected value="">... Cargando ... </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2" for="ddlDependencia">Dependencia</label>
+            <div class="col-12 col-md-9">
+                <select id="ddlDependencia" class="form-control"
+                    data-id-field="Id" data-text-field="Descripcion" data-select-text=">> Seleccionar <<">
+                    <option selected value="">... Cargando ... </option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2" for="txtFechaDesde">Fecha Desde</label>
+            <div class="col-12 col-md-3">
+                <div class="input-group date" data-provide="datepicker" data-date-language="es">
+                    <input type="text" class="form-control" id="txtFechaDesde" datatype="date" />
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3" for="txtFechaHasta">Fecha Hasta</label>
+            <div class="col-12 col-md-3">
+                <div class="input-group date" data-provide="datepicker" data-date-language="es">
+                    <input type="text" class="form-control" id="txtFechaHasta" datatype="date" />
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-12 col-sm-12 col-md-3 col-lg-2 col-xl-2" for="txtCaratula">Carátula</label>
+            <div class="col-12 col-md-9">
+                <input id="txtCaratula" class="form-control" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-10">
+                <button type="button" class="btn mt-1 btn-lg btn-info" onclick="btnCancelar_ClientClick(this,event);">CANCELAR</button>
+                <button type="button" class="btn mt-1 btn-lg btn-danger" id="btnBuscar" onclick="btnBuscar_ClientClick(this,event)">BUSCAR  </button>
+            </div>
+        </div>
+    </div>
+    <div panelid="pnlResultado" style="display: none">
+        <div class="row jumbotronBlanco" panelresultsid="pnlNoRecords" style="display: none">
+            <div class="col-12">
+                <h1>No se encontraron datos para mostrar</h1>
+                <p>Puede cambiar los filtros de búsqueda y volver a intentar</p>
+                <p><i>En caso de tratarse de un expediente de SAC LABORAL CAPITAL por favor verifique su nuevo número <a href="../_Expedientes/ExpedientesSacLaboralBuscar.aspx">aquí</a></i></p>
+                <p><i>En caso de tratarse de un expediente de SAC CIVIL CAPITAL por favor verifique su nuevo número <a href="../_Expedientes/ExpedientesSacCivilBuscar.aspx">aquí</a></i></p>
+            </div>
+        </div>
+        <div class="row" panelresultsid="pnlGridresult" style="display: none">
+            <div id="grdExpedientes" class="col-12"></div>
+        </div>
+        <div class="row mt-1">
+            <div class="col-12 text-center">
+                <button class="btn mt-1 btn-lg btn-info" onclick="btnNuevaBusqueda_ClientClick(this, event);" type="button">NUEVA BÚSQUEDA</button>
+            </div>
+        </div>
+    </div>
+    <div style="display: none">
+        <img alt="" src="/sitiocontadores/sitiocontadores.aspx?type=counter&Aplicacion=MarcoPolo&Pagina=Expedientes&Seccion=&Usuario=1-20816&SessionId=&Personal1=&Personal2=&Personal3=" />
+    </div>
+    <input type="hidden" name="ctl00$ctl00$cphDetalle$cphDetalle$hdIdUsuario" id="hdIdUsuario" value="1490473" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="gototop js-top"><a href="javascript:void(0);" class="js-gotop"><i class="glyphicon glyphicon-arrow-up"></i></a></div>
+    
+
+    <input type="hidden" name="ctl00$ctl00$RefreshHandlerModule_PostbackGuid" id="RefreshHandlerModule_PostbackGuid" value="cc38fee6-bdb1-4540-950c-63c693fd1ec5" />
+
+<script type="text/javascript">
+//<![CDATA[
+mobileRedirection();//]]>
+</script>
+</form>
+</body>
+</html>
